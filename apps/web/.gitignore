@@ -1,0 +1,27 @@
+# Next.js
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Synced from repo-root /assets/ by scripts/sync-assets.mjs (task 11.4)
+# Treated as build artifact: regenerated on every predev / prebuild.
+public/assets/

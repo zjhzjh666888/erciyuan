@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="36" viewBox="0 0 800 36" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="degradedGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FF6F6F"/>
+      <stop offset="100%" stop-color="#FF8B6F"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="800" height="36" fill="url(#degradedGrad)"/>
+  <text x="400" y="23" font-family="-apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">⚠ DEGRADED MODE — placeholder banner</text>
+</svg>

@@ -1,0 +1,18 @@
+# Audio assets — pending external download
+
+The 4 audio assets below cannot be usefully placeholdered. They are
+external Pixabay / Kenney downloads that the human team must fetch
+manually, then drop into this directory and re-run check:assets.
+
+See assets/PROCUREMENT.md tasks 7.1–7.4 for full URLs / licenses.
+
+| Output filename                  | Source / License | PROCUREMENT task |
+| -------------------------------- | ---------------- | ---------------- |
+| audio/isekai_jingle.mp3          | Pixabay          | 7.1              |
+| audio/popup_drop.mp3             | Pixabay          | 7.2              |
+| audio/click_{01..03}.mp3 (×3)    | Pixabay / Kenney | 7.3              |
+| audio/mascot_born_bgm.mp3        | Pixabay / Kenney | 7.4              |
+
+Until downloads land, these entries are recorded in MANIFEST.yaml with
+required_for_demo=false so check:assets does not fail. Once each file
+exists, flip required_for_demo=true and update hash + size_kb.

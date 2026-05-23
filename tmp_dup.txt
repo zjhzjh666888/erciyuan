@@ -1,0 +1,60 @@
+﻿  /**
+   * task 12.4锛氭妸鎸囧畾绮剧伒鐨勫綋鍓嶄笘鐣屽潗鏍囨姇褰卞埌灞忓箷鍧愭爣锛圖OM CSS px锛屼笌
+   * SpeechBubbleLayer 鐨?overlay 瀹瑰櫒鍚屽潗鏍囩郴锛夈€?
+   *
+   * 璁＄畻娴佺▼锛?
+   *   1. TownScene 缁欏嚭绮剧伒涓栫晫鍧愭爣锛圥haser 鍍忕礌锛宻crollX/Y 鍚屽潗鏍囩郴锛夈€?
+   *   2. 閫氳繃 `cameras.main` 鐨?scroll + zoom 鎶曞奖鍒?canvas 鍐呴儴鍧愭爣
+   *      锛堜粛鏄?Phaser 鍐呴儴 game 鍍忕礌锛屼笉鏄?DOM CSS 鍍忕礌锛夈€?
+   *   3. 閫氳繃 `scale.displaySize / gameSize` 姣斾緥缂╂斁鍒?DOM 鍍忕礌銆?
+   *   4. 鍔犱笂 canvas 鍦ㄧ埗瀹瑰櫒鍐呯殑灞呬腑鍋忕Щ锛坄Scale.FIT` 浼氱暀 letterbox锛夈€?
+   *
+   * 涔嬫墍浠ユ斁鍦?RenderEngine 鑰屼笉鏄?TownSceneApi锛氱 3銆? 姝ラ渶瑕?Phaser.Game 鐨?
+   * scale.canvasBounds + parent锛屾瘮 Scene 鍐呴儴鏇撮『鎵嬶紱鍚屾椂涓婂眰 React 缁勪欢
+   * 涓嶅簲鐩存帴鎷垮埌 Scene 寮曠敤锛坉esign.md 搂1.9 鎺ュ彛杈圭晫锛夈€?
+   *
+   * @returns null 褰擄細鈶?TownScene 鏈氨缁紱鈶?绮剧伒鏈敞鍐岋紱鈶?褰撳墠鐢诲竷鏈?layout銆?
+   */
+  getSpriteScreenPosition(charId: string): { x: number; y: number } | null {
+    if (!this.game || !this.townScene) return null
+    const world = this.townScene.getSpriteWorldPosition(charId)
+    if (!world) return null
+
+    // Phaser 涓荤浉鏈猴細world 鈫?camera-view锛堜粛鏄?Phaser game 鍐呴儴 px锛夈€?
+    const camera = this.game.scene.scenes
+      .find((s) => s.cameras?.main)
+      ?.cameras.main
+    if (!camera) return null
+    const viewX = (world.x - camera.scrollX) * camera.zoom
+    const viewY = (world.y - camera.scrollY) * camera.zoom
+
+    // game 鍐呴儴 px 鈫?DOM CSS px锛欶IT 妯″紡涓嬬殑 displaySize / gameSize 姣斻€?
+    const scale = this.game.scale
+    const gameW = scale.gameSize.width
+    const gameH = scale.gameSize.height
+    const displayW = scale.displaySize.width
+    const displayH = scale.displaySize.height
+    if (gameW <= 0 || gameH <= 0 || displayW <= 0 || displayH <= 0) return null
+    const scaleX = displayW / gameW
+    const scaleY = displayH / gameH
+
+    // canvas 鍦?parent 瀹瑰櫒鍐呯殑灞呬腑鍋忕Щ锛團IT 鐣?letterbox锛夈€?
+    const parent = scale.parent as HTMLElement | null
+    if (!parent) return null
+    const parentW = parent.clientWidth
+    const parentH = parent.clientHeight
+    const offsetX = (parentW - displayW) / 2
+    const offsetY = (parentH - displayH) / 2
+
+    return {
+      x: offsetX + viewX * scaleX,
+      y: offsetY + viewY * scaleY,
+    }
+  }
+
+  /**
+   * task 12.5锛氬箍鎾竴鏉¤鑹茶剼涓嬪姩浣滄弿杩帮紙design.md 搂1.5锛夈€?
+   *
+   *  - `label` 涓?string 鏃舵樉绀猴紱`null` 琛ㄧず璇ヨ鑹?next_action 宸茬粨鏉燂紝绔嬪嵆
+   *    娓呴櫎锛堜笌 design.md 搂1.5 / mock-town timeline 琛屼负涓€鑷达級銆?
+   *  - 鍚屾椂琚?Mock-Town `dispatchServerMsg` 涓?Slice 6 Agent_Core 绔鐢細

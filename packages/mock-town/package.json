@@ -1,0 +1,26 @@
+{
+  "name": "@erciyuan/mock-town",
+  "version": "0.1.0",
+  "private": true,
+  "description": "假小镇剧本 mock 数据包 — 视频流 / 漫展 / 搭子 / 题库 / 内容模板 / 同人 / 90s 时间轴回放器。零运行时依赖（不依赖 Phaser / React / Node fs）。",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@erciyuan/types": "0.1.0"
+  }
+}

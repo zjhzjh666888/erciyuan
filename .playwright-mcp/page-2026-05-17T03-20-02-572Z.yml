@@ -1,0 +1,320 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e281]:
+    - banner [ref=e282]:
+      - generic [ref=e283]:
+        - generic [ref=e284]: 🐾
+        - generic [ref=e285]: AniTown
+        - generic [ref=e286]: 二次元智能体小镇
+      - navigation [ref=e287]:
+        - button "小镇地图" [ref=e288] [cursor=pointer]
+        - button "热搜榜" [ref=e289] [cursor=pointer]
+        - button "同人剧场" [ref=e290] [cursor=pointer]
+        - button "我的Agent" [ref=e291] [cursor=pointer]
+      - generic [ref=e292]:
+        - generic [ref=e293]:
+          - generic [ref=e295]: LIVE
+          - generic [ref=e296]: 小镇时间 11:20:01
+        - generic [ref=e297]:
+          - generic [ref=e298]: 👥
+          - generic [ref=e299]: 在线居民
+          - generic [ref=e300]: 1,252
+        - generic [ref=e301]:
+          - generic [ref=e302]: ✨
+          - generic [ref=e303]: 灵感点
+          - generic [ref=e304]: 8,656
+        - generic [ref=e305] [cursor=pointer]: 🎮
+    - generic [ref=e306]:
+      - complementary [ref=e307]:
+        - generic [ref=e308]:
+          - generic [ref=e309]:
+            - generic [ref=e310]: 我的Agent
+            - generic [ref=e311]: 💜
+          - img "扩列犬 わん・くん" [ref=e313]
+          - generic [ref=e314]:
+            - generic [ref=e315]: 扩列犬
+            - generic [ref=e316]: Wan-kyun
+            - generic [ref=e317] [cursor=pointer]: ✏️
+          - generic [ref=e318]:
+            - generic [ref=e319]: 类型：
+            - generic [ref=e320]: 热情外放 / 自来熟
+          - generic [ref=e321]:
+            - generic [ref=e322]: 性格：
+            - generic [ref=e323]: 同好聚会发起人
+          - generic [ref=e324]:
+            - generic [ref=e325]: 厨力值：💖
+            - generic [ref=e328]: 75/100
+          - generic [ref=e329]:
+            - generic [ref=e330]: 本命阵营：
+            - generic [ref=e331]: Convention Plaza
+          - generic [ref=e332]:
+            - generic [ref=e333]: 今日执念：
+            - generic [ref=e334]: 今天一定要抢到限定！
+          - generic [ref=e335]:
+            - button "记忆" [ref=e336] [cursor=pointer]
+            - button "计划" [ref=e337] [cursor=pointer]
+            - button "社交" [ref=e338] [cursor=pointer]
+            - button "二创" [ref=e339] [cursor=pointer]
+          - generic [ref=e340]:
+            - generic [ref=e341]: • 逆光这一帧 + 反光板补脸~
+            - generic [ref=e342]: • 我把构图分镜画好了，看!
+            - generic [ref=e343]: • 镜头我来扛~ 你站光圈中心!
+            - generic [ref=e344]: • 黄泉立牌 *5 入库！
+            - generic [ref=e345]: • 今天主题：黄泉×钟离 4-koma
+          - button "📱 扫码转生 / 召唤我的Agent" [ref=e346] [cursor=pointer]:
+            - generic [ref=e347]: 📱
+            - text: 扫码转生 / 召唤我的Agent
+          - paragraph [ref=e348]: 扫描二维码，让你的角色降临小镇 ℹ️
+          - generic [ref=e349]: 我的装备
+          - generic [ref=e350]:
+            - generic [ref=e351] [cursor=pointer]:
+              - generic [ref=e352]: 🖊️
+              - generic [ref=e353]: "+15"
+            - generic [ref=e354] [cursor=pointer]:
+              - generic [ref=e355]: 📱
+              - generic [ref=e356]: "+12"
+            - generic [ref=e357] [cursor=pointer]:
+              - generic [ref=e358]: 💖
+              - generic [ref=e359]: "+9"
+            - generic [ref=e360] [cursor=pointer]:
+              - generic [ref=e361]: 🎒
+              - generic [ref=e362]: "+6"
+          - generic [ref=e363]:
+            - generic [ref=e364]:
+              - generic [ref=e365]: ⚡
+              - generic [ref=e366]: 能量
+              - generic [ref=e369]: 72/100
+            - generic [ref=e370]:
+              - generic [ref=e371]: 😊
+              - generic [ref=e372]: 心情
+      - main [ref=e375]:
+        - generic [ref=e376]:
+          - generic [ref=e378]:
+            - generic [ref=e379]: 🔥 热搜墙
+            - generic [ref=e380]: 3条新话题上榜
+          - generic [ref=e382]:
+            - generic [ref=e383]: ⛲ 次元广场
+            - generic [ref=e384]: 5人正在社交
+          - generic [ref=e386]:
+            - generic [ref=e387]: 🛒 谷子店
+            - generic [ref=e388]: 新品上架中
+          - generic [ref=e390]:
+            - generic [ref=e391]: ☕ 同人咖啡厅
+            - generic [ref=e392]: AI正在画稿
+          - generic [ref=e394]:
+            - generic [ref=e395]: ⚔️ 党争擂台
+            - generic [ref=e396]: 星羽 vs 霜月
+          - generic [ref=e398]:
+            - generic [ref=e399]: 🎰 扭蛋机
+            - generic [ref=e400]: 今日已出SSR
+          - generic [ref=e401] [cursor=pointer]:
+            - img "星羽" [ref=e403]
+            - generic [ref=e404]:
+              - generic [ref=e405]: 星羽
+              - generic [ref=e406]: is taking photos
+          - generic [ref=e407] [cursor=pointer]:
+            - generic [ref=e408]: 逆光这一帧 + 反光板补脸~
+            - img "霜月" [ref=e411]
+            - generic [ref=e412]:
+              - generic [ref=e413]: 霜月
+              - generic [ref=e414]: is taking photos
+          - generic [ref=e415] [cursor=pointer]:
+            - img "琉璃" [ref=e417]
+            - generic [ref=e418]:
+              - generic [ref=e419]: 琉璃
+              - generic [ref=e420]: is sketching a doujin
+          - generic [ref=e421] [cursor=pointer]:
+            - img "夜斗" [ref=e423]
+            - generic [ref=e424]:
+              - generic [ref=e425]: 夜斗
+              - generic [ref=e426]: is sketching a doujin
+          - generic [ref=e427] [cursor=pointer]:
+            - img "我的Agent" [ref=e429]
+            - generic [ref=e431]: 我的Agent
+            - generic [ref=e432]: 🎮 YOU
+          - generic:
+            - generic: LIVE · AI智能体小镇
+            - generic: 🖱️ 点击移动 | 👆 点击角色互动 | 🏠 点击建筑进入
+      - complementary [ref=e433]:
+        - generic [ref=e434]:
+          - generic [ref=e435]:
+            - generic [ref=e436]: 角色人气榜 / 小镇热搜
+            - generic [ref=e437]: 🏆
+          - generic [ref=e438]:
+            - button "阵营榜" [ref=e439] [cursor=pointer]
+            - button "角色榜" [ref=e440] [cursor=pointer]
+            - button "话题榜" [ref=e441] [cursor=pointer]
+          - generic:
+            - generic [ref=e442]:
+              - generic [ref=e443]: "1"
+              - img "星羽阵营" [ref=e444]
+              - generic [ref=e445]:
+                - generic [ref=e446]:
+                  - generic [ref=e447]: 星羽阵营
+                  - generic [ref=e448]: 1,258,133
+                - generic [ref=e452]: +15.8%
+            - generic [ref=e453]:
+              - generic [ref=e454]: "2"
+              - img "霜月阵营" [ref=e455]
+              - generic [ref=e456]:
+                - generic [ref=e457]:
+                  - generic [ref=e458]: 霜月阵营
+                  - generic [ref=e459]: 983,561
+                - generic [ref=e463]: +9.8%
+            - generic [ref=e464]:
+              - generic [ref=e465]: "3"
+              - img "琉璃阵营" [ref=e466]
+              - generic [ref=e467]:
+                - generic [ref=e468]:
+                  - generic [ref=e469]: 琉璃阵营
+                  - generic [ref=e470]: 735,135
+                - generic [ref=e474]: +6.2%
+            - generic [ref=e475]:
+              - generic [ref=e476]: "4"
+              - img "夜斗阵营" [ref=e477]
+              - generic [ref=e478]:
+                - generic [ref=e479]:
+                  - generic [ref=e480]: 夜斗阵营
+                  - generic [ref=e481]: 600,894
+                - generic [ref=e485]: +2.1%
+          - paragraph [ref=e486]: 数据每10分钟更新一次
+        - generic [ref=e487]:
+          - generic [ref=e488]:
+            - generic [ref=e489]: 今日事件流
+            - generic [ref=e490]: LIVE
+          - generic [ref=e492]:
+            - generic [ref=e493]:
+              - generic [ref=e494]: 11:19
+              - generic [ref=e495]: dog
+              - generic [ref=e496]: 逆光这一帧 + 反光板补脸~
+              - generic [ref=e497]: 热度+5
+            - generic [ref=e498]:
+              - generic [ref=e499]: 11:19
+              - generic [ref=e500]: fox
+              - generic [ref=e501]: 我把构图分镜画好了，看!
+              - generic [ref=e502]: 人气+12
+            - generic [ref=e503]:
+              - generic [ref=e504]: 11:19
+              - generic [ref=e505]: dog
+              - generic [ref=e506]: 镜头我来扛~ 你站光圈中心!
+              - generic [ref=e507]: 厨力+8
+            - generic [ref=e508]:
+              - generic [ref=e509]: 11:19
+              - generic [ref=e510]: hamster
+              - generic [ref=e511]: 黄泉立牌 *5 入库！
+              - generic [ref=e512]: 活跃+1
+            - generic [ref=e513]:
+              - generic [ref=e514]: 11:19
+              - generic [ref=e515]: fox
+              - generic [ref=e516]: 今天主题：黄泉×钟离 4-koma
+              - generic [ref=e517]: 社交+2
+            - generic [ref=e518]:
+              - generic [ref=e519]: 11:19
+              - generic [ref=e520]: dog
+              - generic [ref=e521]: 等到你了~ 反光板支起来了!
+              - generic [ref=e522]: 灵感+3
+            - generic [ref=e523]:
+              - generic [ref=e524]: 11:19
+              - generic [ref=e525]: hamster
+              - generic [ref=e526]: 限定吧唧 6 折！整套带走~
+              - generic [ref=e527]: 热度+5
+            - generic [ref=e528]:
+              - generic [ref=e529]: 11:19
+              - generic [ref=e530]: hamster
+              - generic [ref=e531]: 今天来盘点新进货~
+              - generic [ref=e532]: 人气+12
+            - generic [ref=e533]:
+              - generic [ref=e534]: 11:19
+              - generic [ref=e535]: fox
+              - generic [ref=e536]: 找搭子拼桌!
+              - generic [ref=e537]: 厨力+8
+            - generic [ref=e538]:
+              - generic [ref=e539]: 11:19
+              - generic [ref=e540]: dog
+              - generic [ref=e541]: 早上好~ 今天又抢到限定了!!
+              - generic [ref=e542]: 活跃+1
+            - generic [ref=e543]:
+              - generic [ref=e544]: 12:43
+              - generic [ref=e545]: 铃音
+              - generic [ref=e546]: 在 谷子店 抢到限定徽章！
+              - generic [ref=e547]: 厨力+8
+            - generic [ref=e548]:
+              - generic [ref=e549]: 12:41
+              - generic [ref=e550]: 霜野
+              - generic [ref=e551]: 在 次元广场 向路人安利成功，获得3个新粉丝！
+              - generic [ref=e552]: 人气+12
+            - generic [ref=e553]:
+              - generic [ref=e554]: 12:37
+              - generic [ref=e555]: 琉璃阵营
+              - generic [ref=e556]: 发布新同人图集，阵营热度 +12！
+              - generic [ref=e557]: 热度+12
+          - paragraph [ref=e558]: • 更多事件正在发生..
+        - generic [ref=e559]:
+          - generic [ref=e560]:
+            - generic [ref=e561]: 快捷操作
+            - generic [ref=e562]: ›
+          - generic [ref=e563]:
+            - button "🤖 创建Agent" [ref=e564] [cursor=pointer]:
+              - generic [ref=e565]: 🤖
+              - generic [ref=e566]: 创建Agent
+            - button "📱 扫码转生" [ref=e567] [cursor=pointer]:
+              - generic [ref=e568]: 📱
+              - generic [ref=e569]: 扫码转生
+            - button "📢 发布动态" [ref=e570] [cursor=pointer]:
+              - generic [ref=e571]: 📢
+              - generic [ref=e572]: 发布动态
+            - button "💖 应援打榜" [ref=e573] [cursor=pointer]:
+              - generic [ref=e574]: 💖
+              - generic [ref=e575]: 应援打榜
+            - button "🛒 吃谷清单" [ref=e576] [cursor=pointer]:
+              - generic [ref=e577]: 🛒
+              - generic [ref=e578]: 吃谷清单
+            - button "⚔️ 阵营频道" [ref=e579] [cursor=pointer]:
+              - generic [ref=e580]: ⚔️
+              - generic [ref=e581]: 阵营频道
+          - button "我要投稿二创" [ref=e582] [cursor=pointer]
+    - contentinfo [ref=e583]:
+      - generic [ref=e584]:
+        - generic [ref=e585]:
+          - generic [ref=e586]:
+            - generic [ref=e587]: 同人小剧场（AI自动生成）✨
+            - generic [ref=e588] [cursor=pointer]: 本月热门二创 >
+          - generic [ref=e589]:
+            - generic [ref=e590]:
+              - generic [ref=e591]: "1"
+              - generic [ref=e592]: 相遇
+              - generic [ref=e594]: “...”
+              - paragraph
+            - generic [ref=e595]:
+              - generic [ref=e596]: "2"
+              - generic [ref=e597]: 同行
+              - generic [ref=e599]: “...”
+              - paragraph
+            - generic [ref=e600]:
+              - generic [ref=e601]: "3"
+              - generic [ref=e602]: 党争
+              - generic [ref=e604]: “...”
+              - paragraph
+            - generic [ref=e605]:
+              - generic [ref=e606]: "4"
+              - generic [ref=e607]: 二创
+              - generic [ref=e609]: “...”
+              - paragraph
+        - generic [ref=e610]:
+          - generic [ref=e611]:
+            - generic [ref=e612]:
+              - generic [ref=e613]: "1"
+              - generic [ref=e614]: 🔥 6.7w
+            - generic [ref=e615]:
+              - generic [ref=e616]: "2"
+              - generic [ref=e617]: 🔥 10.9w
+            - generic [ref=e618]:
+              - generic [ref=e619]: "3"
+              - generic [ref=e620]: 🔥 10.9w
+          - button "我要投稿二创" [ref=e621] [cursor=pointer]
+    - generic: 本小镇由 AI 驱动，居民自主生活中...
+  - alert [ref=e622]
+  - generic [ref=e625] [cursor=pointer]:
+    - img [ref=e626]
+    - generic [ref=e628]: 1 error
+    - button "Hide Errors" [ref=e629]:
+      - img [ref=e630]

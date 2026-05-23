@@ -1,0 +1,325 @@
+/*
+ * task 14.1 — Page_VideoFeed CSS Module
+ *
+ * 隔离原则：
+ *   - **所有类名一律 `feed-` 前缀**，CSS Module 又会自动 hash 化，绝不会与
+ *     globals.css 已有的 `.anitown-*` / `.story-*` / `.agent-*` / `.event-*`
+ *     等首页样式冲突。
+ *   - 不引入 globals.css 任何修改（task 14.1 边界禁止触碰首页 UI 样式）。
+ *   - `[data-video-feed-scroll]` 属性选择器由 globals.css 提供（隐藏 Webkit
+ *     滚动条，task 11+ 已落地），本模块只复用、不重写。
+ *
+ * 视觉规范：
+ *   - 容器 max-width 540px 居中黑底（与首页脱钩的"手机一屏"沉浸视图）
+ *   - 每张卡 100vh + scroll-snap-align: start，无卡间距
+ *   - 字体 var(--font-pixel-zh)（与全站一致）
+ *   - 颜色直接写值，因为这是黑色沉浸主题；不用 `--surface-glass-*` token
+ *     （那些是仪表盘的玻璃风格，与抖音 feed 风格不搭）
+ */
+
+/* ─── 顶层视口 ─────────────────────────────────────────────────────────── */
+
+.feed-viewport {
+  position: relative;
+  max-width: 540px;
+  margin: 0 auto;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+  font-family: var(--font-pixel-zh), "霞鹜文楷", sans-serif;
+  color: #f5f5f7;
+}
+
+/* ─── 顶部 sticky 状态栏 ──────────────────────────────────────────────── */
+
+.feed-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.32) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none; /* 让卡片下面可滑，按钮自身在 :children 重新启用 */
+}
+
+.feed-header-title {
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feed-header-live {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff6f6f;
+  box-shadow: 0 0 6px rgba(255, 111, 111, 0.85);
+  animation: feedLivePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes feedLivePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.feed-header-home-btn {
+  pointer-events: auto;
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.9);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.42);
+  transition: all 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feed-header-home-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ─── 主滚动容器 ─────────────────────────────────────────────────────── */
+
+.feed-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  /* Firefox / IE legacy 隐藏滚动条；Webkit/Blink 由 globals.css 的
+     `[data-video-feed-scroll]::-webkit-scrollbar` 兜底。 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── 单张视频卡 ─────────────────────────────────────────────────────── */
+
+.feed-card {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+}
+
+.feed-card-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 半透明渐变叠层 — 让作者信息在亮色 thumbnail 上仍清晰可读 */
+.feed-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.42) 28%,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  pointer-events: none;
+}
+
+/* ─── 左下文字层（作者 / 标题 / 标签 / 元数据） ─────────────────────── */
+
+.feed-card-info {
+  position: absolute;
+  left: 16px;
+  right: 76px;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #f5f5f7;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  z-index: 5;
+}
+
+.feed-card-author-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feed-card-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  flex-shrink: 0;
+}
+
+.feed-card-author-name {
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.feed-card-title {
+  margin: 0;
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed-card-tags {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.feed-card-tag {
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #f5f5f7;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.feed-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 11px;
+  color: rgba(245, 245, 247, 0.78);
+  letter-spacing: 0.02em;
+}
+
+.feed-card-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ─── 右下浮动按钮组（点赞 / 评论 / 分享 / 收藏） ─────────────────── */
+
+.feed-card-actions {
+  position: absolute;
+  right: 12px;
+  bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  z-index: 6;
+}
+
+.feed-card-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 52px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #f5f5f7;
+  cursor: pointer;
+  font-family: var(--font-pixel-zh), sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feed-card-action-btn:hover {
+  transform: scale(1.08);
+}
+
+.feed-card-action-btn:active {
+  transform: scale(0.95);
+}
+
+.feed-card-action-icon {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.feed-card-action-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 247, 0.92);
+}
+
+/* ─── Toast（点击装饰按钮的提示） ───────────────────────────────────── */
+
+.feed-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 88px;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(28, 28, 36, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f5f5f7;
+  font-family: var(--font-pixel-zh), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  animation: feedToastIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes feedToastIn {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

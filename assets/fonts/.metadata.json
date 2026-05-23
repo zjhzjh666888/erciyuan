@@ -1,0 +1,69 @@
+{
+  "_comment": "Scratch metadata file for tasks 7.5 / 7.6 — to be picked up by task 7.7 when registering fonts in MANIFEST.yaml. Delete this file after MANIFEST.yaml is updated.",
+  "_generated_by": "task 7.5 + 7.6 buildbot",
+  "_generated_at_iso": "2026-01-15T00:00:00Z",
+  "fonts": [
+    {
+      "task": "7.5",
+      "target_path": "fonts/pixel_zh.ttf",
+      "status": "PLACEHOLDER",
+      "reason": "Vonwaon Bitmap Font is itch.io-only; itch.io requires browser CSRF + session cookie for downloads. timothyqiu has no GitHub mirror (verified via GitHub API: 33 repos, none font-related).",
+      "placeholder_file": "fonts/pixel_zh.ttf.PLACEHOLDER",
+      "intended_source": {
+        "name": "Vonwaon Bitmap Font",
+        "license": "CC0",
+        "license_full": "CC0 1.0 Universal (Public Domain Dedication)",
+        "author": "Haoyu Qiu (timothyqiu)",
+        "source_url": "https://timothyqiu.itch.io/vonwaon-bitmap",
+        "covers_charset": "GB2312 (Simplified Chinese, 12px / 16px bitmap)"
+      },
+      "fallback_source": {
+        "name": "Zpix (最像素)",
+        "license": "OFL",
+        "license_full": "SIL Open Font License 1.1",
+        "author": "SolidZORO",
+        "source_url": "https://github.com/SolidZORO/zpix-pixel-font/releases/download/v3.1.11/zpix.ttf",
+        "size_kb": 7011,
+        "covers_charset": "Simplified + Traditional Chinese + Japanese"
+      },
+      "manifest_entry_template": {
+        "path": "fonts/pixel_zh.ttf",
+        "category": "font",
+        "hash": "sha256:<COMPUTE_AFTER_DOWNLOAD>",
+        "size_kb": "<COMPUTE_AFTER_DOWNLOAD>",
+        "license": "CC0",
+        "source_url": "https://timothyqiu.itch.io/vonwaon-bitmap",
+        "author": "Haoyu Qiu",
+        "required_for_demo": true
+      }
+    },
+    {
+      "task": "7.6",
+      "target_path": "fonts/pixel_en_romaji.ttf",
+      "status": "DOWNLOADED",
+      "downloaded_from": "https://github.com/TakWolf/ark-pixel-font/releases/download/2026.05.07/ark-pixel-font-12px-proportional-ttf-v2026.05.07.zip",
+      "extracted_member": "ark-pixel-12px-proportional-latin.ttf",
+      "release_tag": "2026.05.07",
+      "release_published_at": "2026-05-07T08:38:00Z",
+      "size_bytes": 4986508,
+      "size_kb": 4870,
+      "sha256": "e770ead89647cb72259be545bc4e87a7a323839bbbf7c1b848a5f6926ea07b74",
+      "license": "OFL",
+      "license_full": "SIL Open Font License 1.1",
+      "author": "TakWolf",
+      "source_url": "https://github.com/TakWolf/ark-pixel-font",
+      "covers_charset": "Latin (English + romaji uses Latin alphabet); for full CJK use ja/zh_cn variants from same release",
+      "notes": "Picked the 'latin' variant from the 12px-proportional-ttf release zip. Latin covers English + romaji (Hepburn / Kunrei-shiki). For Japanese kana glyphs, switch to ark-pixel-12px-proportional-ja.ttf from the same zip (4892 KB).",
+      "manifest_entry_template": {
+        "path": "fonts/pixel_en_romaji.ttf",
+        "category": "font",
+        "hash": "sha256:e770ead89647cb72259be545bc4e87a7a323839bbbf7c1b848a5f6926ea07b74",
+        "size_kb": 4870,
+        "license": "OFL",
+        "source_url": "https://github.com/TakWolf/ark-pixel-font",
+        "author": "TakWolf",
+        "required_for_demo": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>次元萌宠小镇</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: #f0f0f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      overflow: auto;
+      user-select: none;
+      padding: 20px 0;
+    }
+
+    /* ─────────────────────────────
+       手机外壳
+    ───────────────────────────── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 44px;
+      border: 1.5px solid rgba(0,0,0,0.08);
+      background: #fff;
+      box-shadow:
+        0 0 0 8px #e0e0ea,
+        0 8px 60px rgba(0,0,0,0.18);
+    }
+
+    @media (max-width: 430px) {
+      body { align-items: flex-start; background: #fff; }
+      .phone {
+        width: 100vw;
+        height: 100svh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
+    .hidden { display: none !important; }
+
+    /* ═══════════════════════════════
+       PAGE 1 — 视频流（抖音风格）
+    ═══════════════════════════════ */
+
+    /* page1 视频区占满导航条之间的空间 */
+    #page1 {
+      position: absolute;
+      inset: 0 0 56px 0;
+    }
+
+    /* 视频区：占满 page1 */
+    .feed-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* 视频滑动容器 */
+    .feed-track {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+    }
+
+    /* 单个视频卡片 */
+    .video-card {
+      width: 100%;
+      position: absolute;
+      left: 0;
+      overflow: hidden;
+      background: #111;
+    }
+
+    /* 视频背景 */
+    .video-bg {
+      position: absolute;
+      inset: 0;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(50px);
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: rgba(200,150,255,0.7);
+      border-radius: 50%;
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.15; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.8); }
+    }
+
+    /* 萌宠图片：全屏居中，竖向稍偏上 */
+    .video-img {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* 顶部渐变蒙层（保证文字可读） */
+    .video-top-grad {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 140px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
+      z-index: 8;
+      pointer-events: none;
+    }
+    /* 底部渐变蒙层 */
+    .video-bot-grad {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 320px;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    /* 顶部导航 — 持久显示在 .phone 根层 */
+    .top-nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 48px 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      pointer-events: auto;
+    }
+    /* 默认深色（page1 视频背景） */
+    .nav-menu { color: #fff; font-size: 22px; cursor: pointer; flex-shrink: 0; }
+    .nav-tabs { display: flex; gap: 10px; align-items: center; flex: 1; justify-content: center; }
+    .nav-tab {
+      color: rgba(255,255,255,0.6);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      padding-bottom: 3px;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-tab.active {
+      color: #fff;
+      font-weight: 700;
+      border-bottom: 2px solid #fff;
+    }
+    .nav-search { color: #fff; font-size: 22px; cursor: pointer; flex-shrink: 0; }
+    /* 浅色模式（page2 白色背景） */
+    .top-nav.light { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .top-nav.light .nav-menu,
+    .top-nav.light .nav-search { color: #1a1a1a; }
+    .top-nav.light .nav-tab { color: rgba(0,0,0,0.35); }
+    .top-nav.light .nav-tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+
+    /* 二次元检测进度条 */
+    .anime-meter {
+      position: absolute;
+      top: 104px; left: 14px; right: 14px;
+      z-index: 30;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .anime-meter.visible { opacity: 1; }
+    .meter-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .meter-bar-bg {
+      height: 3px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .meter-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      border-radius: 2px;
+      transition: width 0.3s linear;
+    }
+
+    /* 右侧操作栏 */
+    .sidebar {
+      position: absolute;
+      right: 10px;
+      bottom: 90px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* 头像 + 红色加号 */
+    .s-avatar-wrap {
+      position: relative;
+      width: 48px;
+      margin-bottom: 4px;
+    }
+    .s-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      background: linear-gradient(135deg, #ff2d78, #7b2fff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .s-avatar-plus {
+      position: absolute;
+      bottom: -8px; left: 50%;
+      transform: translateX(-50%);
+      width: 20px; height: 20px;
+      background: #fe2c55;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #fff; font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .s-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .s-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .s-icon:active { transform: scale(0.88); }
+    .s-icon.liked { filter: none; }
+    .s-count { font-size: 12px; color: #fff; font-weight: 500; }
+    .spin { animation: spin 4s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 音乐碟片 */
+    .s-disc {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333, #111);
+      border: 3px solid #555;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      animation: spin 4s linear infinite;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+
+    /* 底部视频信息区 */
+    .video-info {
+      position: absolute;
+      bottom: 52px;
+      left: 12px;
+      right: 72px;
+      z-index: 20;
+    }
+
+    /* 用户名行 */
+    .v-user-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .v-username {
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .v-cocreate {
+      color: rgba(255,255,255,0.65);
+      font-size: 12px;
+      display: flex; align-items: center; gap: 3px;
+    }
+
+    /* 共创者头像行 */
+    .v-coavatar-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 8px;
+    }
+    .v-coavatar {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .v-coavatar-img {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.6);
+      background: linear-gradient(135deg, #ff2d78, #7b2fff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      overflow: hidden;
+    }
+    .v-coavatar-name {
+      color: rgba(255,255,255,0.7);
+      font-size: 10px;
+    }
+
+    /* 描述文字 */
+    .v-desc {
+      color: rgba(255,255,255,0.9);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .v-expand {
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline;
+    }
+
+    /* 弹幕提示 */
+    .v-danmu {
+      position: absolute;
+      left: 12px;
+      bottom: 148px;
+      z-index: 20;
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .v-danmu-icon {
+      width: 22px; height: 22px;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* 相关搜索条 */
+    .v-search-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 20;
+      height: 40px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .v-search-icon { color: rgba(255,255,255,0.55); font-size: 15px; }
+    .v-search-text { color: rgba(255,255,255,0.75); font-size: 13px; flex: 1; }
+    .v-search-arrow { color: rgba(255,255,255,0.4); font-size: 16px; }
+
+    /* 进度条（视频底部） */
+    .v-progress {
+      position: absolute;
+      bottom: 40px; left: 0; right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      z-index: 21;
+    }
+    .v-progress-fill {
+      height: 100%;
+      background: rgba(255,255,255,0.6);
+      animation: prog 15s linear infinite;
+    }
+    @keyframes prog { from { width: 0%; } to { width: 100%; } }
+
+    /* 底部 Tab 导航栏 — 持久显示在 .phone 根层 */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 56px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      z-index: 100;
+    }
+    .bottom-nav.light {
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .bottom-nav.light .bn-icon { color: rgba(0,0,0,0.4); }
+    .bottom-nav.light .bn-label { color: rgba(0,0,0,0.35); }
+    .bottom-nav.light .bn-item.active .bn-icon { color: #1a1a1a; }
+    .bottom-nav.light .bn-item.active .bn-label { color: #1a1a1a; }
+    .bn-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      cursor: pointer; flex: 1;
+    }
+    .bn-icon { font-size: 22px; color: rgba(255,255,255,0.85); }
+    .bn-label { font-size: 10px; color: rgba(255,255,255,0.6); }
+    .bn-item.active .bn-icon { color: #fff; }
+    .bn-item.active .bn-label { color: #fff; font-weight: 600; }
+
+    /* 发布按钮（中间） */
+    .bn-plus {
+      width: 44px; height: 28px;
+      background: linear-gradient(90deg, #25f4ee, #fe2c55);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: #fff; font-weight: 300;
+      box-shadow: 0 0 0 2px #000, 0 0 0 4px rgba(255,255,255,0.15);
+      cursor: pointer;
+      position: relative;
+    }
+    .bn-plus::before {
+      content: '';
+      position: absolute;
+      left: -4px; top: 0; bottom: 0;
+      width: 10px;
+      background: #25f4ee;
+      border-radius: 6px;
+      opacity: 0.7;
+    }
+    .bn-plus::after {
+      content: '';
+      position: absolute;
+      right: -4px; top: 0; bottom: 0;
+      width: 10px;
+      background: #fe2c55;
+      border-radius: 6px;
+      opacity: 0.7;
+    }
+    .bn-plus-inner {
+      position: relative; z-index: 2;
+      background: #fff;
+      width: 44px; height: 28px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: #000; font-weight: 300;
+    }
+
+    /* 滑动提示 */
+    .swipe-hint {
+      position: absolute;
+      bottom: 66px; left: 50%; transform: translateX(-50%);
+      z-index: 30;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      animation: hintBob 1.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes hintBob {
+      0%,100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+      50% { transform: translateX(-50%) translateY(-4px); opacity: 0.9; }
+    }
+    .swipe-hint-arrow { color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1; }
+    .swipe-hint-text { font-size: 10px; color: rgba(255,255,255,0.35); }
+
+    /* 礼物盒掉落 */
+    .gift-drop-wrap {
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      cursor: pointer;
+      text-align: center;
+    }
+    .gift-drop-wrap.drop-in {
+      animation: giftDropIn 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    @keyframes giftDropIn {
+      0%   { top: -180px; transform: translateX(-50%) scale(1); }
+      60%  { top: 290px;  transform: translateX(-50%) scale(1.06); }
+      73%  { top: 274px;  transform: translateX(-50%) scale(0.96); }
+      86%  { top: 283px;  transform: translateX(-50%) scale(1.02); }
+      100% { top: 278px;  transform: translateX(-50%) scale(1); }
+    }
+    .drop-label {
+      color: #1a1a1a;
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      opacity: 0;
+      letter-spacing: 0.5px;
+    }
+    .gift-drop-wrap.drop-in .drop-label {
+      animation: labelFadeIn 0.35s ease 0.75s forwards;
+    }
+    @keyframes labelFadeIn { to { opacity: 1; } }
+    .box-mascot {
+      font-size: 26px;
+      display: block;
+      margin-bottom: -6px;
+      position: relative;
+      z-index: 2;
+    }
+    .gift-drop-wrap.drop-in .box-mascot {
+      animation: mascotWiggle 2s ease-in-out 1s infinite;
+    }
+    @keyframes mascotWiggle {
+      0%,100% { transform: rotate(-6deg) translateY(0); }
+      50%      { transform: rotate(6deg) translateY(-3px); }
+    }
+    .box-3d { position: relative; width: 104px; margin: 0 auto; }
+    .box-top-face {
+      width: 104px; height: 28px;
+      background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+      border-radius: 10px 10px 0 0;
+      position: relative;
+    }
+    .box-top-face::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 14px; height: 100%;
+      background: linear-gradient(180deg, rgba(255,213,79,0.9), rgba(255,143,0,0.9));
+    }
+    .box-front-face {
+      width: 104px; height: 74px;
+      background: linear-gradient(160deg, #e53935 0%, #b71c1c 100%);
+      border-radius: 0 0 10px 10px;
+      position: relative;
+      box-shadow: 0 8px 28px rgba(180,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .box-front-face::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; right: 0; height: 14px;
+      transform: translateY(-50%);
+      background: linear-gradient(180deg, rgba(255,213,79,0.85), rgba(255,143,0,0.85));
+    }
+    .box-front-face::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 50%; width: 14px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, rgba(255,213,79,0.85), rgba(255,143,0,0.85));
+    }
+    .box-year {
+      color: rgba(255,255,255,0.85);
+      font-size: 15px; font-weight: 900; letter-spacing: 2px;
+      position: relative; z-index: 3;
+    }
+    .box-side-face {
+      position: absolute; right: -10px; top: 4px;
+      width: 10px; height: calc(100% - 4px);
+      background: linear-gradient(180deg, #8b0000, #5a0000);
+      border-radius: 0 4px 4px 0;
+      transform: skewY(-2deg);
+    }
+    .box-glow {
+      position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 20px;
+      background: radial-gradient(ellipse, rgba(255,80,80,0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .gift-drop-wrap.drop-in .box-glow {
+      animation: glowPulse 1.5s ease-in-out 1s infinite;
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity: 0.5; transform: translateX(-50%) scaleX(0.9); }
+      50%      { opacity: 1;   transform: translateX(-50%) scaleX(1.15); }
+    }
+    .sparkle {
+      position: absolute; color: #ffdc00; font-size: 11px;
+      pointer-events: none;
+    }
+    .gift-drop-wrap.drop-in .sparkle {
+      animation: sp 1.8s ease-in-out 0.9s infinite;
+    }
+    @keyframes sp {
+      0%,100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(20deg); }
+    }
+
+    /* 滑动提示 */
+    .swipe-hint {
+      position: absolute;
+      bottom: 8px; left: 50%; transform: translateX(-50%);
+      z-index: 30;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      animation: hintBob 1.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes hintBob {
+      0%,100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+      50% { transform: translateX(-50%) translateY(-4px); opacity: 0.9; }
+    }
+    .swipe-hint-arrow { color: rgba(0,0,0,0.35); font-size: 16px; line-height: 1; }
+    .swipe-hint-text { font-size: 10px; color: rgba(0,0,0,0.25); }
+
+    /* 弹框蒙层 */
+    .overlay {
+      position: absolute; inset: 0;
+      z-index: 60;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: flex-end;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .popup {
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid rgba(255,45,120,0.2);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 22px 36px;
+      animation: slideUp 0.4s cubic-bezier(0.34,1.46,0.64,1);
+      box-shadow: 0 -6px 40px rgba(0,0,0,0.1);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .popup-handle {
+      width: 38px; height: 4px;
+      background: rgba(0,0,0,0.12);
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+    .popup-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,45,120,0.08);
+      border: 1px solid rgba(255,45,120,0.2);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 11px; color: #e0366c; margin-bottom: 12px;
+    }
+    .popup-title {
+      font-size: 21px; font-weight: 800; color: #1a1a1a;
+      margin-bottom: 7px; line-height: 1.3;
+    }
+    .popup-title span {
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .popup-sub {
+      font-size: 13px; color: rgba(0,0,0,0.45);
+      margin-bottom: 22px; line-height: 1.6;
+    }
+    .btn-main {
+      width: 100%; height: 52px;
+      background: linear-gradient(90deg, #ff2d78 0%, #e0367a 100%);
+      border: none; border-radius: 26px;
+      color: #fff; font-size: 17px; font-weight: 700;
+      cursor: pointer; margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(255,45,120,0.35);
+      letter-spacing: 1px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-main:active { opacity: 0.85; transform: scale(0.98); }
+    .btn-skip {
+      display: block; width: 100%; text-align: center;
+      color: rgba(0,0,0,0.3); font-size: 14px;
+      background: none; border: none; cursor: pointer; padding: 8px;
+    }
+
+    /* 视频切换特效 */
+    .flash-overlay {
+      position: absolute; inset: 0; z-index: 25;
+      background: rgba(255,255,255,0.4);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .flash-overlay.flash { opacity: 1; }
+
+    /* ═══════════════════════════════
+       PAGE 2 — 召唤萌宠
+    ═══════════════════════════════ */
+    #page2 {
+      position: absolute;
+      inset: 0 0 56px 0;
+      background: #fff;
+    }
+
+    .p2-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(55px); pointer-events: none;
+    }
+
+    /* 通用内容区 — 顶部留出 top-nav 高度（约 88px） */
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 88px 20px 30px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* 顶部栏 */
+    .top-bar {
+      position: relative; z-index: 10;
+      display: flex; align-items: center;
+      padding: 4px 0px 14px;
+      gap: 12px;
+    }
+    .back-btn {
+      width: 36px; height: 36px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 50%; border: none;
+      color: #333; font-size: 18px;
+      cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,0,0,0.1); }
+    .top-title {
+      font-size: 17px; font-weight: 700; color: #1a1a1a;
+    }
+
+    /* 场景1：路径选择 */
+    #s-input .headline {
+      padding: 0 0 6px;
+      font-size: 26px; font-weight: 800; color: #1a1a1a;
+      line-height: 1.3;
+    }
+    #s-input .headline span {
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #s-input .sub {
+      font-size: 13px; color: rgba(0,0,0,0.4);
+      margin-bottom: 24px;
+    }
+
+    /* 路径 tab */
+    .tab-row {
+      display: flex; gap: 8px; margin-bottom: 18px;
+    }
+    .tab-btn {
+      flex: 1; height: 38px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(0,0,0,0.1);
+      background: rgba(0,0,0,0.03);
+      color: rgba(0,0,0,0.4);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(255,45,120,0.08);
+      border-color: #ff2d78;
+      color: #e0366c;
+    }
+
+    /* AI 输入区 */
+    #pane-ai { animation: fadeSlide 0.25s ease; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .input-prompt {
+      font-size: 14px; color: rgba(0,0,0,0.5);
+      margin-bottom: 10px; line-height: 1.5;
+    }
+    .input-prompt strong { color: rgba(0,0,0,0.8); }
+    .text-input {
+      width: 100%; height: 110px;
+      background: rgba(0,0,0,0.03);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 16px;
+      color: #1a1a1a; font-size: 15px;
+      padding: 14px 16px;
+      resize: none; outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .text-input::placeholder { color: rgba(0,0,0,0.25); }
+    .text-input:focus { border-color: rgba(255,45,120,0.4); }
+
+    /* 问卷区 */
+    #pane-quiz { animation: fadeSlide 0.25s ease; }
+    .q-block { margin-bottom: 16px; }
+    .q-label {
+      font-size: 13px; color: rgba(0,0,0,0.45);
+      margin-bottom: 8px; line-height: 1.5;
+    }
+    .q-label strong { color: rgba(0,0,0,0.75); font-size: 14px; }
+    .opts { display: flex; flex-wrap: wrap; gap: 7px; }
+    .opt {
+      padding: 6px 13px;
+      background: rgba(0,0,0,0.04);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 20px;
+      color: rgba(0,0,0,0.55);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.18s;
+      user-select: none;
+    }
+    .opt.selected {
+      background: rgba(168,85,247,0.1);
+      border-color: #a855f7;
+      color: #8b3fcf;
+    }
+
+    /* 萌宠身份选择 */
+    .mascot-pick-label {
+      font-size: 14px; font-weight: 700; color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .mascot-pick-sub {
+      font-size: 12px; color: rgba(0,0,0,0.4);
+      margin-bottom: 14px;
+    }
+    .mascot-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; margin-bottom: 20px;
+    }
+    .mascot-card {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 5px; padding: 10px 4px 8px;
+      background: rgba(0,0,0,0.03);
+      border: 1.5px solid rgba(0,0,0,0.07);
+      border-radius: 14px; cursor: pointer;
+      transition: all 0.18s; user-select: none;
+    }
+    .mascot-card:active { transform: scale(0.94); }
+    .mascot-card.selected {
+      background: rgba(168,85,247,0.08);
+      border-color: #a855f7;
+    }
+    .mascot-card-emoji { width: 48px; height: 48px; object-fit: contain; }
+    .mascot-card-name {
+      font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.65);
+      text-align: center; line-height: 1.3;
+    }
+    .mascot-card.selected .mascot-card-name { color: #8b3fcf; }
+    .mascot-card-kw {
+      font-size: 10px; color: rgba(0,0,0,0.35); text-align: center;
+    }
+
+    /* 自定义标签输入 */
+    .tag-input-label {
+      font-size: 14px; font-weight: 700; color: #1a1a1a;
+      margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+    }
+    .tag-input-sub {
+      font-size: 12px; color: rgba(0,0,0,0.4);
+      margin-bottom: 10px;
+    }
+    .tag-chips-wrap {
+      min-height: 44px;
+      background: rgba(0,0,0,0.03);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 14px;
+      padding: 8px 10px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      align-items: center; cursor: text;
+      transition: border-color 0.2s;
+      margin-bottom: 8px;
+    }
+    .tag-chips-wrap.focused { border-color: rgba(168,85,247,0.5); }
+    .tag-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(168,85,247,0.1);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 20px; padding: 3px 9px;
+      font-size: 12px; color: #7c3aed; font-weight: 600;
+      cursor: default;
+    }
+    .tag-chip-del {
+      font-size: 13px; color: rgba(124,58,237,0.5);
+      cursor: pointer; line-height: 1; margin-left: 1px;
+    }
+    .tag-input-field {
+      border: none; outline: none; background: transparent;
+      font-size: 13px; color: #1a1a1a; font-family: inherit;
+      min-width: 90px; flex: 1;
+    }
+    .tag-input-field::placeholder { color: rgba(0,0,0,0.25); }
+    .tag-hint {
+      font-size: 11px; color: rgba(0,0,0,0.3);
+      margin-bottom: 18px;
+    }
+
+    /* 社交策略卡片 */
+    .strategy-card {
+      width: calc(100% - 32px);
+      background: linear-gradient(135deg, rgba(255,45,120,0.04), rgba(168,85,247,0.07));
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin: 0 0 10px;
+      animation: fadeSlide 0.4s ease 0.45s both;
+    }
+    .strategy-card-title {
+      font-size: 13px; font-weight: 700;
+      color: rgba(0,0,0,0.75);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .strategy-card-title span {
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .strategy-section { margin-bottom: 14px; }
+    .strategy-section:last-child { margin-bottom: 0; }
+    .strategy-section-label {
+      font-size: 11px; color: rgba(0,0,0,0.35); font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .match-row {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 16px; padding: 14px;
+      margin-bottom: 10px;
+    }
+    .match-row:last-child { margin-bottom: 0; }
+    .match-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 13px;
+    }
+    .match-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff2d78, #a855f7);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .match-header-info { flex: 1; }
+    .match-name { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px; }
+    .match-mascot-type { font-size: 11px; color: rgba(0,0,0,0.38); }
+    .match-compat-badge {
+      background: linear-gradient(90deg, rgba(255,45,120,0.08), rgba(168,85,247,0.1));
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 11px; font-weight: 700; color: #a855f7; flex-shrink: 0;
+    }
+
+    .dim-row { margin-bottom: 10px; }
+    .dim-row:last-child { margin-bottom: 0; }
+    .dim-label {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: rgba(0,0,0,0.38);
+      margin-bottom: 6px; letter-spacing: 0.3px;
+    }
+    .dim-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    .sim-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .sim-bar-bg {
+      flex: 1; height: 5px;
+      background: rgba(0,0,0,0.07); border-radius: 3px; overflow: hidden;
+    }
+    .sim-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      border-radius: 3px;
+    }
+    .sim-pct {
+      font-size: 13px; font-weight: 800; flex-shrink: 0;
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sim-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .sim-tag {
+      padding: 3px 9px;
+      background: rgba(255,45,120,0.07);
+      border: 1px solid rgba(255,45,120,0.2);
+      border-radius: 20px; font-size: 11px; color: #e0366c; font-weight: 600;
+    }
+
+    .comp-text {
+      font-size: 12px; color: rgba(0,0,0,0.58); line-height: 1.65;
+      background: rgba(168,85,247,0.04);
+      border-radius: 10px; padding: 8px 11px;
+    }
+
+    .chem-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(90deg, rgba(255,45,120,0.06), rgba(168,85,247,0.09));
+      border: 1px solid rgba(168,85,247,0.22);
+      border-radius: 11px; padding: 9px 12px;
+    }
+    .chem-pill-text { font-size: 12px; font-weight: 700; color: #7c3aed; line-height: 1.45; }
+    .icebreaker-list { display: flex; flex-direction: column; gap: 6px; }
+    .icebreaker-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 10px; padding: 9px 11px;
+      font-size: 12px; color: rgba(0,0,0,0.65); line-height: 1.5;
+    }
+    .icebreaker-step {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff2d78, #a855f7);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; font-weight: 700;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* 生成按钮 */
+    .btn-gen {
+      display: block;
+      width: 100%;
+      height: 54px;
+      margin: 20px 0 8px;
+      background: linear-gradient(90deg, #ff2d78 0%, #a855f7 100%);
+      border: none; border-radius: 27px;
+      color: #fff; font-size: 17px; font-weight: 800;
+      cursor: pointer; letter-spacing: 1px;
+      box-shadow: 0 4px 24px rgba(168,85,247,0.3);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-gen:active { opacity: 0.85; transform: scale(0.98); }
+
+    /* 场景2：加载中 */
+    #s-loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%;
+    }
+    .loading-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      border: 3px solid rgba(0,0,0,0.06);
+      border-top-color: #ff2d78;
+      border-right-color: #a855f7;
+      animation: ring-spin 1s linear infinite;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .loading-ring::after {
+      content: '🐾';
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      animation: ring-spin 1s linear infinite reverse;
+    }
+    @keyframes ring-spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: 17px; font-weight: 700; color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .loading-sub {
+      font-size: 13px; color: rgba(0,0,0,0.4);
+    }
+    .dots span {
+      display: inline-block;
+      animation: dot-fade 1.2s ease-in-out infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot-fade { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+    /* 场景3：萌宠结果 */
+    #s-result {
+      padding-top: 0;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+    .result-header {
+      width: 100%; padding: 88px 20px 0 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .result-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,180,0,0.1);
+      border: 1px solid rgba(255,180,0,0.3);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 12px; color: #b8860b;
+      margin: 16px auto 0;
+    }
+    .mascot-stage {
+      width: 220px; height: 220px;
+      position: relative;
+      margin: 8px auto 0;
+    }
+    .mascot-glow {
+      position: absolute; inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,45,120,0.15) 0%, transparent 70%);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%,100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .mascot-img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      position: relative; z-index: 2;
+      animation: mascot-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes mascot-in {
+      from { opacity: 0; transform: scale(0.4) rotate(-10deg); }
+      to { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    .result-card {
+      width: calc(100% - 32px);
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 20px;
+      padding: 18px 18px 14px;
+      margin: 12px 0 10px;
+      animation: fadeSlide 0.4s ease 0.3s both;
+    }
+    .r-name {
+      font-size: 22px; font-weight: 800; color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .r-name span {
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .r-type {
+      font-size: 12px; color: rgba(0,0,0,0.35);
+      margin-bottom: 10px;
+    }
+    .r-desc {
+      font-size: 14px; color: rgba(0,0,0,0.6);
+      line-height: 1.6; margin-bottom: 12px;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag {
+      padding: 4px 11px;
+      border-radius: 12px;
+      font-size: 12px; font-weight: 600;
+      background: rgba(168,85,247,0.08);
+      border: 1px solid rgba(168,85,247,0.2);
+      color: #8b3fcf;
+    }
+    .result-btns {
+      width: calc(100% - 32px);
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 28px;
+      animation: fadeSlide 0.4s ease 0.5s both;
+    }
+    .btn-enter {
+      height: 52px;
+      background: linear-gradient(90deg, #ff2d78, #a855f7);
+      border: none; border-radius: 26px;
+      color: #fff; font-size: 16px; font-weight: 800;
+      cursor: pointer; letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(168,85,247,0.3);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-enter:active { opacity: 0.85; transform: scale(0.98); }
+    .btn-invite {
+      height: 48px;
+      background: rgba(0,0,0,0.04);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 24px;
+      color: rgba(0,0,0,0.55);
+      font-size: 15px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-invite:hover { background: rgba(0,0,0,0.07); }
+
+    /* 触发来源 banner */
+    .trigger-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(255,45,120,0.05);
+      border: 1px solid rgba(255,45,120,0.18);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      animation: fadeSlide 0.4s ease;
+    }
+    .trigger-banner .tb-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .trigger-banner .tb-text { font-size: 12px; line-height: 1.55; color: rgba(0,0,0,0.5); }
+    .trigger-banner .tb-text strong { color: #e0366c; font-size: 13px; display: block; margin-bottom: 2px; }
+    .trigger-banner .tb-tag {
+      display: inline-block; margin-top: 5px; margin-right: 4px;
+      padding: 2px 8px; border-radius: 9px;
+      background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2);
+      color: #8b3fcf; font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+  <!-- 持久顶部导航 -->
+  <div class="top-nav" id="topNav">
+    <span class="nav-menu">☰</span>
+    <div class="nav-tabs">
+      <span class="nav-tab">直播</span>
+      <span class="nav-tab">团购</span>
+      <span class="nav-tab">关注</span>
+      <span class="nav-tab">商城</span>
+      <span class="nav-tab active">推荐</span>
+    </div>
+    <span class="nav-search">🔍</span>
+  </div>
+
+  <!-- 持久底部导航 -->
+  <div class="bottom-nav" id="bottomNav">
+    <div class="bn-item active">
+      <span class="bn-icon">🏠</span>
+      <span class="bn-label">首页</span>
+    </div>
+    <div class="bn-item">
+      <span class="bn-icon">👥</span>
+      <span class="bn-label">朋友</span>
+    </div>
+    <div class="bn-item" style="flex:0.8;">
+      <div class="bn-plus"><div class="bn-plus-inner">＋</div></div>
+    </div>
+    <div class="bn-item" style="position:relative;">
+      <span class="bn-icon">💬</span>
+      <span class="bn-label">消息</span>
+      <span style="position:absolute;top:2px;right:10px;background:#fe2c55;color:#fff;font-size:9px;font-weight:700;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;">2</span>
+    </div>
+    <div class="bn-item">
+      <span class="bn-icon">👤</span>
+      <span class="bn-label">我</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       PAGE 1
+  ══════════════════════════════ -->
+  <div id="page1">
+
+    <!-- 视频区（flex: 1） -->
+    <div class="feed-wrap" id="feedWrap">
+      <!-- 视频滑动轨道 -->
+      <div class="feed-track" id="feedTrack"></div>
+
+      <!-- 二次元检测进度条 -->
+      <div class="anime-meter" id="animeMeter">
+        <div class="meter-label">✨ 次元感知中 <span id="meterPct">0%</span></div>
+        <div class="meter-bar-bg">
+          <div class="meter-bar-fill" id="meterFill"></div>
+        </div>
+      </div>
+
+      <!-- 礼物盒 -->
+      <div class="gift-drop-wrap" id="giftDrop" onclick="showPopup()">
+        <div class="drop-label">恭喜您获得</div>
+        <span class="box-mascot">🐱</span>
+        <div class="box-3d">
+          <div class="box-top-face"></div>
+          <div class="box-front-face">
+            <div class="box-side-face"></div>
+            <span class="box-year">2026</span>
+          </div>
+          <div class="box-glow"></div>
+        </div>
+        <span class="sparkle" style="top:28px;left:-14px;animation-delay:0s;">✦</span>
+        <span class="sparkle" style="top:10px;right:-10px;animation-delay:0.55s;">✦</span>
+        <span class="sparkle" style="bottom:8px;left:-6px;animation-delay:1.1s;">✦</span>
+        <span class="sparkle" style="bottom:24px;right:-14px;animation-delay:0.35s;">✦</span>
+      </div>
+
+      <!-- 右侧操作栏 -->
+      <div class="sidebar" id="sidebar"></div>
+
+      <!-- 滑动提示 -->
+      <div class="swipe-hint" id="swipeHint">
+        <div class="swipe-hint-arrow">↑</div>
+        <div class="swipe-hint-text">上滑换一个</div>
+      </div>
+
+      <!-- 切换闪烁 -->
+      <div class="flash-overlay" id="flashOverlay"></div>
+
+      <!-- 弹框蒙层 -->
+      <div class="overlay hidden" id="overlay">
+        <div class="popup">
+          <div class="popup-handle"></div>
+          <div class="popup-tag">✨ 次元感知系统触发</div>
+          <div class="popup-title">检测到高浓度<span>二次元内容</span>！</div>
+          <div class="popup-sub">你已在二次元内容中停留超过 <strong id="animeTime">8</strong> 秒，为你掉落一只专属萌宠！</div>
+          <button class="btn-main" onclick="goToPage2()">🐾 立即召唤</button>
+          <button class="btn-skip" onclick="closePopup()">不感兴趣</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════
+       PAGE 2
+  ══════════════════════════════ -->
+  <div id="page2" class="hidden">
+    <!-- 背景装饰 -->
+    <div class="p2-blob" style="width:220px;height:220px;background:#d8b4fe;top:60px;left:-80px;opacity:0.25;"></div>
+    <div class="p2-blob" style="width:180px;height:180px;background:#fda4af;bottom:150px;right:-60px;opacity:0.2;"></div>
+
+    <!-- 场景1：身份选择 + 自定义标签 -->
+    <div id="s-input" class="screen">
+      <div class="top-bar">
+        <button class="back-btn" onclick="backToPage1()">‹</button>
+        <span class="top-title">建立你的萌宠档案</span>
+      </div>
+
+      <!-- 触发来源 banner -->
+      <div id="triggerBanner" class="trigger-banner hidden">
+        <span class="tb-icon">📡</span>
+        <div class="tb-text">
+          <strong id="tbTitle">次元感知已触发！</strong>
+          <span id="tbDesc"></span>
+          <div id="tbTags"></div>
+        </div>
+      </div>
+
+      <!-- Step 1: 选择萌宠身份 -->
+      <div class="mascot-pick-label">选择你的萌宠人格</div>
+      <div class="mascot-pick-sub">7 类固定角色，选最像你的那一个</div>
+      <div class="mascot-grid" id="mascotGrid">
+        <div class="mascot-card" data-id="扩列犬" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/扩列犬.png" alt="扩列犬">
+          <span class="mascot-card-name">扩列犬</span>
+          <span class="mascot-card-kw">社交发动机</span>
+        </div>
+        <div class="mascot-card" data-id="追番猫" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/云仔.png" alt="追番猫">
+          <span class="mascot-card-name">追番猫</span>
+          <span class="mascot-card-kw">追番不鸽更</span>
+        </div>
+        <div class="mascot-card" data-id="囤囤鼠" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/囤囤鼠.png" alt="囤囤鼠">
+          <span class="mascot-card-name">囤囤鼠</span>
+          <span class="mascot-card-kw">收藏狂魔</span>
+        </div>
+        <div class="mascot-card" data-id="太太狐" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/太太狐.png" alt="太太狐">
+          <span class="mascot-card-name">太太狐</span>
+          <span class="mascot-card-kw">同人创作者</span>
+        </div>
+        <div class="mascot-card" data-id="考据猫" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/考据猫.png" alt="考据猫">
+          <span class="mascot-card-name">考据猫</span>
+          <span class="mascot-card-kw">深挖考据癖</span>
+        </div>
+        <div class="mascot-card" data-id="限定狼" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/限定狼.png" alt="限定狼">
+          <span class="mascot-card-name">限定狼</span>
+          <span class="mascot-card-kw">限定猎手</span>
+        </div>
+        <div class="mascot-card" data-id="咕咕鸽" onclick="pickMascot(this)">
+          <img class="mascot-card-emoji" src="萌宠形象/咕咕鸽.png" alt="咕咕鸽">
+          <span class="mascot-card-name">咕咕鸽</span>
+          <span class="mascot-card-kw">佛系摆烂</span>
+        </div>
+      </div>
+
+      <!-- Step 2: 自定义标签 -->
+      <div class="tag-input-label">贴上你的专属标签</div>
+      <div class="tag-input-sub">随便写，描述你自己——兴趣、癖好、梗、频道、角色名都行</div>
+      <div class="tag-chips-wrap" id="tagChipsWrap" onclick="focusTagInput()">
+        <input class="tag-input-field" id="tagInputField"
+          placeholder="输入后按空格或回车添加标签…"
+          onkeydown="handleTagKey(event)"
+          onfocus="document.getElementById('tagChipsWrap').classList.add('focused')"
+          onblur="document.getElementById('tagChipsWrap').classList.remove('focused')">
+      </div>
+      <div class="tag-hint">💡 例：原神 / 魈厨 / 深夜追番 / 专注治愈系 / 手办开箱 / 组队看展</div>
+
+      <button class="btn-gen" onclick="startGenerate()">🤖 AI 生成我的社交策略</button>
+    </div>
+
+    <!-- 场景2：加载中 -->
+    <div id="s-loading" class="hidden" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="loading-ring"></div>
+      <div class="loading-text">AI 正在生成你的社交策略</div>
+      <div class="loading-sub">根据你的萌宠人格 + 自定义标签匹配<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+    </div>
+
+    <!-- 场景3：萌宠结果 -->
+    <div id="s-result" class="screen hidden">
+      <div class="result-header">
+        <button class="back-btn" onclick="resetToInput()">‹</button>
+        <span class="top-title">我的萌宠档案</span>
+      </div>
+      <div class="result-badge">✨ 社交策略已生成！你的萌宠档案</div>
+
+      <div class="mascot-stage">
+        <div class="mascot-glow"></div>
+        <img class="mascot-img" id="resultMascotImg" src="萌宠形象/扩列犬.png" alt="萌宠">
+      </div>
+
+      <div class="result-card">
+        <div class="r-name"><span id="rName">扩列犬 · 旺旺</span></div>
+        <div class="r-type" id="rType">社交系 · 扩列党 · 小镇社交发动机</div>
+        <div class="r-desc" id="rDesc">你的扩列犬有点社恐，但一遇到同频的人就会疯狂输出，直球热情停不下来。</div>
+        <div class="tags" id="rTags"></div>
+      </div>
+
+      <!-- AI 社交策略 -->
+      <div class="strategy-card">
+        <div class="strategy-card-title">🤖 <span>AI 社交策略</span> · 基于你的标签定制</div>
+
+        <div class="strategy-section">
+          <div class="strategy-section-label">📌 推荐认识的人</div>
+          <div id="strategyMatches"></div>
+        </div>
+
+        <div class="strategy-section">
+          <div class="strategy-section-label">🏙️ 在小镇的破冰方式</div>
+          <div class="icebreaker-list" id="icebreakerList"></div>
+        </div>
+      </div>
+
+      <div class="result-btns">
+        <button class="btn-enter">🏙️ 进入次元小镇</button>
+        <button class="btn-invite">🔗 邀请朋友一起测</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.phone -->
+
+<script>
+// ══════════════════════════════
+// PAGE 1 逻辑
+// ══════════════════════════════
+
+const VIDEOS = [
+  {
+    isAnime: true,
+    visual: { type:'text', icon:'🌸', title:'今日穿搭', sub:'JK 软妹套装上线', color:'#f9a8d4' },
+    bg: 'linear-gradient(160deg, #fdf4ff 0%, #f5f0ff 40%, #fde8ff 70%, #fff5ff 100%)',
+    blobs: [
+      { w:240, h:240, color:'#c4b5fd', t:60, l:-80, op:0.55 },
+      { w:180, h:180, color:'#fbcfe8', t:300, r:-50, op:0.5 },
+      { w:140, h:140, color:'#bae6fd', b:200, l:20, op:0.35 },
+    ],
+    user: '@二次元cos少女',
+    desc: '终于找到了这套JK的搭配方式🌸 同款在主页～',
+    tags: ['#二次元', '#cos', '#穿搭'],
+    music: '小星星变奏曲 - 原声版',
+    avatar: '🐱',
+    likes: '12.4万', comments: '3281',
+  },
+  {
+    isAnime: false,
+    visual: { type:'text', icon:'🍣', title:'探店打卡', sub:'新开鲑鱼饭 · 市中心', color:'#86efac' },
+    bg: 'linear-gradient(160deg, #f0fdf4 0%, #dcfce7 40%, #f0fff4 70%, #fff 100%)',
+    blobs: [
+      { w:210, h:210, color:'#86efac', t:70, l:-60, op:0.45 },
+      { w:170, h:170, color:'#4ade80', t:280, r:-40, op:0.35 },
+      { w:120, h:120, color:'#a7f3d0', b:180, l:40, op:0.3 },
+    ],
+    user: '@美食探店小达人',
+    desc: '今天去了市中心的新开鲑鱼饭店，超级惊艳！😋',
+    tags: ['#美食', '#探店', '#生活'],
+    music: '轻音乐 · 慢生活',
+    avatar: '🍣',
+    likes: '8.7万', comments: '1024',
+  },
+  {
+    isAnime: true,
+    visual: { type:'text', icon:'🎁', title:'盲盒开箱', sub:'本期 SSR 已出！', color:'#f9a8d4' },
+    bg: 'linear-gradient(160deg, #fff1f2 0%, #fce7f3 40%, #fdf4ff 70%, #fff 100%)',
+    blobs: [
+      { w:230, h:230, color:'#f9a8d4', t:50, l:-70, op:0.55 },
+      { w:150, h:150, color:'#d8b4fe', t:340, r:-30, op:0.5 },
+      { w:110, h:110, color:'#a5f3fc', b:190, l:40, op:0.35 },
+    ],
+    user: '@手办开箱_阿宅',
+    desc: '上周的盲盒开出 SSR 了！！附赠同款角色全家福🎁',
+    tags: ['#手办', '#盲盒开箱', '#二次元'],
+    music: '番剧OP精选 - 燃曲合集',
+    avatar: '🎎',
+    likes: '21.3万', comments: '5670',
+  },
+  {
+    isAnime: false,
+    visual: { type:'text', icon:'🌅', title:'早晨打卡', sub:'5AM · 10公里完成', color:'#fcd34d' },
+    bg: 'linear-gradient(160deg, #fffbeb 0%, #fef3c7 40%, #fffbeb 70%, #fff 100%)',
+    blobs: [
+      { w:210, h:210, color:'#fcd34d', t:90, l:-50, op:0.45 },
+      { w:170, h:170, color:'#fdba74', t:270, r:-40, op:0.4 },
+      { w:120, h:120, color:'#fde68a', b:220, l:30, op:0.3 },
+    ],
+    user: '@运动达人Emma',
+    desc: '今天早晨5点跑完10公里，城市的日出真的美翻了 🌅',
+    tags: ['#跑步', '#健身', '#早起打卡'],
+    music: 'Running High - 电子节拍',
+    avatar: '🏃',
+    likes: '5.2万', comments: '892',
+  },
+  {
+    isAnime: true,
+    visual: { type:'text', icon:'🎧', title:'声优名场面', sub:'Re:Zero · 催泪片段', color:'#a5b4fc' },
+    bg: 'linear-gradient(160deg, #eff6ff 0%, #dbeafe 40%, #eff6ff 70%, #fff 100%)',
+    blobs: [
+      { w:190, h:190, color:'#7dd3fc', t:90, l:-50, op:0.5 },
+      { w:170, h:170, color:'#a5b4fc', t:290, r:-40, op:0.45 },
+      { w:130, h:130, color:'#f9a8d4', b:240, l:20, op:0.35 },
+    ],
+    user: '@声优厨_泠泠七弦',
+    desc: '听了无数遍还是会哭的那种配音片段🎧 #声优 #感动',
+    tags: ['#声优', '#动漫', '#二次元'],
+    music: 'Re：Zero OP - Realize',
+    avatar: '🎤',
+    likes: '33.8万', comments: '8821',
+  },
+];
+
+let currentIndex = 0;
+let animeSec = 0;
+let animeTimer = null;
+let giftTriggered = false;
+let isAnimating = false;
+let feedContext = null;
+const THRESHOLD = 8;
+
+const feedTrack = document.getElementById('feedTrack');
+const sidebar = document.getElementById('sidebar');
+
+function buildCards() {
+  VIDEOS.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.top = `${i * FEED_H}px`;
+    card.style.height = `${FEED_H}px`;
+
+    let bgHtml = `<div class="video-bg" style="background:${v.bg};">`;
+    v.blobs.forEach(b => {
+      const pos = [
+        b.t !== undefined ? `top:${b.t}px;` : '',
+        b.b !== undefined ? `bottom:${b.b}px;` : '',
+        b.l !== undefined ? `left:${b.l}px;` : '',
+        b.r !== undefined ? `right:${b.r}px;` : '',
+      ].join('');
+      bgHtml += `<div class="blob" style="width:${b.w}px;height:${b.h}px;background:${b.color};${pos}opacity:${b.op};"></div>`;
+    });
+    bgHtml += `</div>`;
+
+    let starsHtml = '';
+    if (v.isAnime) {
+      starsHtml = `
+        <div class="star" style="top:115px;left:55px;animation-delay:0s;"></div>
+        <div class="star" style="top:195px;left:160px;animation-delay:0.6s;width:3px;height:3px;"></div>
+        <div class="star" style="top:75px;left:230px;animation-delay:1.1s;"></div>
+        <div class="star" style="top:360px;left:38px;animation-delay:0.3s;width:3px;height:3px;"></div>
+        <div class="star" style="top:460px;left:190px;animation-delay:0.9s;"></div>
+      `;
+    }
+
+    const tagsText = v.tags.join(' ');
+    const vis = v.visual;
+    const visualHtml = `
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+        <div style="text-align:center;">
+          <div style="font-size:80px;line-height:1;margin-bottom:16px;filter:drop-shadow(0 4px 24px rgba(0,0,0,0.12));">${vis.icon}</div>
+          <div style="font-size:26px;font-weight:900;color:#1a1a1a;letter-spacing:1px;margin-bottom:8px;text-shadow:0 2px 12px rgba(255,255,255,0.8);">${vis.title}</div>
+          <div style="font-size:14px;color:rgba(0,0,0,0.45);background:rgba(255,255,255,0.6);border-radius:20px;padding:4px 14px;display:inline-block;backdrop-filter:blur(4px);">${vis.sub}</div>
+        </div>
+      </div>
+    `;
+    card.innerHTML = `
+      ${bgHtml}
+      ${starsHtml}
+      <div class="video-top-grad"></div>
+      <div class="video-bot-grad"></div>
+      ${visualHtml}
+      <div class="v-danmu"><div class="v-danmu-icon">弹</div></div>
+      <div class="video-info">
+        <div class="v-user-row">
+          <span class="v-username">${v.user}</span>
+          <span class="v-cocreate">⊙ 2人共创</span>
+        </div>
+        <div class="v-coavatar-row">
+          <div class="v-coavatar">
+            <div class="v-coavatar-img">${v.avatar}</div>
+            <span class="v-coavatar-name">${v.user.replace('@','').substring(0,4)}</span>
+          </div>
+          <div class="v-coavatar">
+            <div class="v-coavatar-img">🌟</div>
+            <span class="v-coavatar-name">搭档</span>
+          </div>
+        </div>
+        <div class="v-desc">${v.desc} ${tagsText} <span class="v-expand">展开</span></div>
+      </div>
+      <div class="v-search-bar">
+        <span class="v-search-icon">🔍</span>
+        <span class="v-search-text">相关搜索 · ${v.user.replace('@','')}${v.tags[0] ? v.tags[0].replace('#','') : ''}合作</span>
+        <span class="v-search-arrow">›</span>
+      </div>
+      <div class="v-progress"><div class="v-progress-fill"></div></div>
+    `;
+    feedTrack.appendChild(card);
+  });
+}
+
+function updateSidebar(v) {
+  sidebar.innerHTML = `
+    <div class="s-avatar-wrap">
+      <div class="s-avatar">${v.avatar}</div>
+      <div class="s-avatar-plus">+</div>
+    </div>
+    <div class="s-item">
+      <div class="s-icon" id="likeBtn" onclick="toggleLike()">🤍</div>
+      <span class="s-count" id="likeCount">${v.likes}</span>
+    </div>
+    <div class="s-item">
+      <div class="s-icon">💬</div>
+      <span class="s-count">${v.comments}</span>
+    </div>
+    <div class="s-item">
+      <div class="s-icon">⭐</div>
+      <span class="s-count">收藏</span>
+    </div>
+    <div class="s-item">
+      <div class="s-icon" onclick="shareVideo()">➦</div>
+      <span class="s-count">转发</span>
+    </div>
+    <div class="s-disc">🎵</div>
+  `;
+}
+
+function goTo(index) {
+  if (isAnimating || index < 0 || index >= VIDEOS.length) return;
+  isAnimating = true;
+  clearInterval(animeTimer);
+  animeTimer = null;
+
+  const flash = document.getElementById('flashOverlay');
+  flash.classList.add('flash');
+  setTimeout(() => flash.classList.remove('flash'), 150);
+
+  currentIndex = index;
+  setTrackY(-currentIndex * FEED_H, true);
+
+  setTimeout(() => {
+    isAnimating = false;
+    startAnimeTimer();
+    updateSidebar(VIDEOS[currentIndex]);
+  }, 380);
+}
+
+function startAnimeTimer() {
+  if (giftTriggered) return;
+  clearInterval(animeTimer);
+  animeTimer = null;
+
+  const v = VIDEOS[currentIndex];
+  if (!v.isAnime) {
+    document.getElementById('animeMeter').classList.remove('visible');
+    return;
+  }
+
+  document.getElementById('animeMeter').classList.add('visible');
+  animeTimer = setInterval(() => {
+    if (giftTriggered) { clearInterval(animeTimer); return; }
+    animeSec = Math.min(animeSec + 0.5, THRESHOLD);
+    const pct = Math.round((animeSec / THRESHOLD) * 100);
+    document.getElementById('meterFill').style.width = pct + '%';
+    document.getElementById('meterPct').textContent = pct + '%';
+    if (animeSec >= THRESHOLD) {
+      clearInterval(animeTimer);
+      triggerGift();
+    }
+  }, 500);
+}
+
+function triggerGift() {
+  if (giftTriggered) return;
+  giftTriggered = true;
+  document.getElementById('animeMeter').classList.remove('visible');
+  const gift = document.getElementById('giftDrop');
+  gift.style.top = '-200px';
+  gift.classList.add('drop-in');
+  setTimeout(showPopup, 1800);
+}
+
+function showPopup() {
+  document.getElementById('animeTime').textContent = Math.round(animeSec);
+  const v = VIDEOS[currentIndex];
+  feedContext = {
+    fromFeed: true,
+    animeTime: Math.round(animeSec),
+    video: { user: v.user, tags: v.tags, avatar: v.avatar, music: v.music }
+  };
+  document.getElementById('overlay').classList.remove('hidden');
+}
+
+function goToPage2() {
+  window.location.href = 'http://localhost:3000/';
+}
+
+function backToPage1() {
+  document.getElementById('page2').classList.add('hidden');
+  document.getElementById('page1').classList.remove('hidden');
+  document.getElementById('topNav').classList.remove('light');
+  document.getElementById('bottomNav').classList.remove('light');
+  // 重置页面2状态
+  document.getElementById('s-input').classList.remove('hidden');
+  document.getElementById('s-loading').classList.add('hidden');
+  document.getElementById('s-result').classList.add('hidden');
+}
+
+function closePopup() {
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+function toggleLike() {
+  const btn = document.getElementById('likeBtn');
+  btn.classList.toggle('liked');
+  btn.textContent = btn.classList.contains('liked') ? '❤️' : '🤍';
+}
+
+function shareVideo() {
+  const btn = event.currentTarget;
+  btn.style.background = 'rgba(255,45,120,0.15)';
+  setTimeout(() => btn.style.background = '', 400);
+}
+
+// 触摸滑动（实时跟手）
+let touchStartY = 0;
+let touchStartTime = 0;
+let isDragging = false;
+const phoneEl = document.getElementById('phone');
+
+function setTrackY(y, animate) {
+  if (animate) {
+    feedTrack.style.transition = 'transform 0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  } else {
+    feedTrack.style.transition = 'none';
+  }
+  feedTrack.style.transform = `translateY(${y}px)`;
+}
+
+phoneEl.addEventListener('touchstart', e => {
+  if (!document.getElementById('page2').classList.contains('hidden')) return;
+  touchStartY = e.touches[0].clientY;
+  touchStartTime = Date.now();
+  isDragging = true;
+  feedTrack.style.transition = 'none';
+}, { passive: true });
+
+phoneEl.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  if (!document.getElementById('page2').classList.contains('hidden')) return;
+  const dy = e.touches[0].clientY - touchStartY;
+  const base = -currentIndex * FEED_H;
+  // 阻尼：边界处手感变重
+  const resistance = (dy > 0 && currentIndex === 0) || (dy < 0 && currentIndex === VIDEOS.length - 1) ? 0.2 : 1;
+  feedTrack.style.transform = `translateY(${base + dy * resistance}px)`;
+}, { passive: true });
+
+phoneEl.addEventListener('touchend', e => {
+  if (!isDragging) return;
+  isDragging = false;
+  if (!document.getElementById('page2').classList.contains('hidden')) return;
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  const dt = Date.now() - touchStartTime;
+  const isFlick = Math.abs(dy) > 30 && dt < 400;
+  const isDragFar = Math.abs(dy) > FEED_H * 0.3;
+  if ((isFlick || isDragFar) && dy > 0) {
+    snapTo(currentIndex + 1);
+  } else if ((isFlick || isDragFar) && dy < 0) {
+    snapTo(currentIndex - 1);
+  } else {
+    snapTo(currentIndex);
+  }
+}, { passive: true });
+
+function snapTo(index) {
+  index = Math.max(0, Math.min(VIDEOS.length - 1, index));
+  const changed = index !== currentIndex;
+  currentIndex = index;
+  setTrackY(-currentIndex * FEED_H, true);
+  if (changed) {
+    const flash = document.getElementById('flashOverlay');
+    flash.classList.add('flash');
+    setTimeout(() => flash.classList.remove('flash'), 150);
+    clearInterval(animeTimer);
+    animeTimer = null;
+    animeSec = 0;
+    setTimeout(() => {
+      startAnimeTimer();
+      updateSidebar(VIDEOS[currentIndex]);
+    }, 380);
+  }
+}
+
+// 鼠标滚轮（桌面）
+let wheelCooldown = false;
+phoneEl.addEventListener('wheel', e => {
+  // 页面2滚动时不切换视频
+  if (!document.getElementById('page2').classList.contains('hidden')) return;
+  e.preventDefault();
+  if (wheelCooldown) return;
+  wheelCooldown = true;
+  setTimeout(() => wheelCooldown = false, 600);
+  if (e.deltaY > 0) goTo(currentIndex + 1);
+  else goTo(currentIndex - 1);
+}, { passive: false });
+
+// 初始化
+const PHONE_H = document.getElementById('phone').clientHeight;
+const FEED_H = document.getElementById('feedWrap').clientHeight;
+buildCards();
+updateSidebar(VIDEOS[0]);
+startAnimeTimer();
+
+setTimeout(() => {
+  const hint = document.getElementById('swipeHint');
+  hint.style.opacity = '0';
+  hint.style.transition = 'opacity 0.5s';
+}, 3000);
+
+
+// ══════════════════════════════
+// PAGE 2 逻辑
+// ══════════════════════════════
+
+// ── 7 类固定萌宠人格 ──
+const MASCOT_DEFS = {
+  "扩列犬": { emoji:"🐕", type:"社交发动机", desc:"你的扩列犬有点社恐，但一遇到同频的人就会疯狂输出，直球热情停不下来。", tags:["直球热情","破冰天才","组队达人","夜猫子","扩列不停歇"], image:"萌宠形象/扩列犬.png" },
+  "追番猫": { emoji:"🐱", type:"追番不鸽更", desc:"正在追 17 部番的资深猫猫，番剧表情包信手拈来，对剧情的执念堪称偏执。", tags:["追番成瘾","不鸽更","番剧梗精","避雷专家","同频秒熟"], image:"萌宠形象/云仔.png" },
+  "囤囤鼠": { emoji:"🐭", type:"收藏狂魔", desc:"痛包比脸大的囤货鼠，周边绝不错过，开箱视频是日常，收藏夹多到数不清。", tags:["痛包控","开箱达人","周边入手","收藏夹爆满","SSR体质"], image:"萌宠形象/囤囤鼠.png" },
+  "太太狐": { emoji:"🦊", type:"同人创作者", desc:"凌晨三点还在肝稿的同人狐，文笔细腻出圈，下一本 AO3 首发预计已被催更 200 条。", tags:["同人大佬","深夜肝稿","感情细腻","宇宙脑洞","催更受害者"], image:"萌宠形象/太太狐.png" },
+  "考据猫": { emoji:"🔍", type:"冷知识百科", desc:"每看一部番就能挖出三层彩蛋的考据猫，冷知识储量惊人，出口成梗。", tags:["考据癖","彩蛋猎手","冷知识","深挖党","wiki常客"], image:"萌宠形象/考据猫.png" },
+  "限定狼": { emoji:"🐺", type:"限定猎手", desc:"情报树最快的那只狼，首发必抢，从不错过任何限定，全靠嗅觉。", tags:["首发必抢","限定雷达","情报灵通","绝不手滑","真香预警"], image:"萌宠形象/限定狼.png" },
+  "咕咕鸽": { emoji:"🕊️", type:"佛系摆烂", desc:"什么都想做、什么都会鸽的小鸽子，但随缘的他总在最关键时刻神秘出现。", tags:["摆烂大师","随缘出没","鸽王本鸽","意外靠谱","神出鬼没"], image:"萌宠形象/咕咕鸽.png" },
+};
+
+// ── 社交策略模板（按萌宠类型 → 推荐对象 + 破冰策略）──
+const STRATEGY_DB = {
+  "扩列犬": {
+    matches: [
+      { mascot:"追番猫", mascotType:"追番不鸽更", emoji:"🐱", nick:"柠檬",
+        similarity: 82, sharedTags:["二次元","追番","夜猫子"],
+        complementarity:"你擅长打破陌生感、主动开话头，他话题储量惊人，你负责开门他负责炸场，越聊越停不下来。",
+        chemistry:"扩列犬 × 追番猫 ＝ 社交发动机 遇上 话题仓库" },
+      { mascot:"太太狐", mascotType:"同人创作者", emoji:"🦊", nick:"晚风",
+        similarity: 67, sharedTags:["同人","二次元","深夜创作"],
+        complementarity:"你负责把她的作品推给更多人，她负责持续产出有深度的内容，一个扩圈一个沉淀，天然共赢。",
+        chemistry:"扩列犬 × 太太狐 ＝ 流量发动机 遇上 内容引擎" },
+      { mascot:"咕咕鸽", mascotType:"佛系摆烂", emoji:"🕊️", nick:"阿咕",
+        similarity: 55, sharedTags:["夜猫子","随缘","动漫"],
+        complementarity:"鸽子需要有人拉着出来玩，你正好擅长这个，帮他解锁沉睡的社交值，反差感超强。",
+        chemistry:"扩列犬 × 咕咕鸽 ＝ 组队发起人 遇上 神秘嘉宾" },
+    ],
+    icebreakers: [
+      { step:"1", text:"先在小镇广场发「招朋友」动态，附上你最近在追的番或玩的游戏" },
+      { step:"2", text:"参加小镇「萌宠联机」公开活动，扩列犬天生适合公开场合破冰" },
+      { step:"3", text:"给你想认识的人的主页发一个「轻互动贴纸」，降低对方回应门槛" },
+    ]
+  },
+  "追番猫": {
+    matches: [
+      { mascot:"考据猫", mascotType:"冷知识百科", emoji:"🔍", nick:"墨墨",
+        similarity: 91, sharedTags:["番剧","彩蛋","深挖"],
+        complementarity:"你追番的广度 + 他挖彩蛋的深度，两人合出「最强番剧分析」，互相提供弹药永远不断。",
+        chemistry:"追番猫 × 考据猫 ＝ 追番广度 遇上 彩蛋深度" },
+      { mascot:"太太狐", mascotType:"同人创作者", emoji:"🦊", nick:"晚风",
+        similarity: 75, sharedTags:["同人","番剧","角色向"],
+        complementarity:"你提供番剧激情和原材料，她把它写成故事，最好的同人发源地就是你们俩。",
+        chemistry:"追番猫 × 太太狐 ＝ 素材供应商 遇上 故事锻造厂" },
+      { mascot:"扩列犬", mascotType:"社交发动机", emoji:"🐕", nick:"旺旺",
+        similarity: 62, sharedTags:["二次元","安利","扩列"],
+        complementarity:"你深挖话题，他负责传播，让你的番剧安利帖走到更多人面前，越来越多同频人找上门。",
+        chemistry:"追番猫 × 扩列犬 ＝ 话题深井 遇上 扩散天线" },
+    ],
+    icebreakers: [
+      { step:"1", text:"在小镇「番剧角」发本周最催泪/最燃的一帧截图，等人接话" },
+      { step:"2", text:"开一个小镇投票「你以为的结局 vs 编剧的结局」，吸引同好来讨论" },
+      { step:"3", text:"在熟悉的用户主页用番剧台词打招呼，同频的人会秒懂" },
+    ]
+  },
+  "囤囤鼠": {
+    matches: [
+      { mascot:"限定狼", mascotType:"限定猎手", emoji:"🐺", nick:"猎影",
+        similarity: 88, sharedTags:["限定","首发","周边"],
+        complementarity:"他情报最快，你收藏欲最强，「首发战队」天然分工：他负责侦查，你负责拿下。",
+        chemistry:"囤囤鼠 × 限定狼 ＝ 首发执行官 遇上 情报前线" },
+      { mascot:"扩列犬", mascotType:"社交发动机", emoji:"🐕", nick:"旺旺",
+        similarity: 60, sharedTags:["开箱","晒图","二次元"],
+        complementarity:"你有宝贝想晒，他有流量帮你传播，开箱帖子能被看见的概率直接翻倍。",
+        chemistry:"囤囤鼠 × 扩列犬 ＝ 开箱达人 遇上 流量放大器" },
+      { mascot:"太太狐", mascotType:"同人创作者", emoji:"🦊", nick:"晚风",
+        similarity: 65, sharedTags:["周边","角色","二次元"],
+        complementarity:"你的手办是她的创作灵感，她的同人图是你的开箱背景，互相喂养、互相种草。",
+        chemistry:"囤囤鼠 × 太太狐 ＝ 周边实体库 遇上 同人图书馆" },
+    ],
+    icebreakers: [
+      { step:"1", text:"发一组开箱照，问「猜猜里面是什么」增加互动感" },
+      { step:"2", text:"在小镇「周边交流角」晒出你的痛包，等同好来认痛" },
+      { step:"3", text:"用你的某件周边发起「猜角色」挑战，谁答对就@他来玩" },
+    ]
+  },
+  "太太狐": {
+    matches: [
+      { mascot:"追番猫", mascotType:"追番不鸽更", emoji:"🐱", nick:"柠檬",
+        similarity: 78, sharedTags:["番剧","角色向","同人"],
+        complementarity:"你需要原料，他追番不停，是你最稳定的素材供应商和头号读者，催更也最积极。",
+        chemistry:"太太狐 × 追番猫 ＝ 故事锻造厂 遇上 素材供应商" },
+      { mascot:"考据猫", mascotType:"冷知识百科", emoji:"🔍", nick:"墨墨",
+        similarity: 72, sharedTags:["设定","世界观","深挖"],
+        complementarity:"你写故事，他挖背景，合作作品的厚度直接翻倍，彼此都能提供对方缺失的那一层。",
+        chemistry:"太太狐 × 考据猫 ＝ 故事骨肉 遇上 设定骨架" },
+      { mascot:"囤囤鼠", mascotType:"收藏狂魔", emoji:"🐭", nick:"棉花糖",
+        similarity: 58, sharedTags:["周边","角色","二次元"],
+        complementarity:"她会把你笔下的角色买成手办，是最真诚的支持者，你的连载她绝不鸽更。",
+        chemistry:"太太狐 × 囤囤鼠 ＝ 内容创作者 遇上 最忠实读者" },
+    ],
+    icebreakers: [
+      { step:"1", text:"发一条「开坑预告」配上你的创作设定，先吊人胃口" },
+      { step:"2", text:"在小镇「创作圈」用一句话梗文开头，等同频人接龙" },
+      { step:"3", text:"给你喜欢的同好留「你的文/图影响了我的创作」类留言，真诚破冰最有效" },
+    ]
+  },
+  "考据猫": {
+    matches: [
+      { mascot:"追番猫", mascotType:"追番不鸽更", emoji:"🐱", nick:"柠檬",
+        similarity: 89, sharedTags:["番剧","彩蛋","冷知识"],
+        complementarity:"追番猫提供追番量，你提供深度，两人合出「最强番剧分析」合集，话题永远炸不完。",
+        chemistry:"考据猫 × 追番猫 ＝ 彩蛋深度 遇上 追番广度" },
+      { mascot:"太太狐", mascotType:"同人创作者", emoji:"🦊", nick:"晚风",
+        similarity: 70, sharedTags:["设定","世界观","角色"],
+        complementarity:"你的设定考据就是她的创作骨架，合作能写出细节拉满的作品，互相补强短板。",
+        chemistry:"考据猫 × 太太狐 ＝ 设定骨架 遇上 故事血肉" },
+      { mascot:"限定狼", mascotType:"限定猎手", emoji:"🐺", nick:"猎影",
+        similarity: 63, sharedTags:["情报","深挖","二次元"],
+        complementarity:"他情报广、你挖得深，信息库广度与深度双杀，联合发帖无人能敌。",
+        chemistry:"考据猫 × 限定狼 ＝ 知识深井 遇上 情报天线" },
+    ],
+    icebreakers: [
+      { step:"1", text:"发一个「99% 的人不知道的番剧彩蛋」帖子，等人来挑战或补充" },
+      { step:"2", text:"在小镇知识角开设「每日冷知识」，吸引长期同好" },
+      { step:"3", text:"找到对方说错的一个细节，用「友善纠错」的方式介绍自己，考据圈最通用的破冰法" },
+    ]
+  },
+  "限定狼": {
+    matches: [
+      { mascot:"囤囤鼠", mascotType:"收藏狂魔", emoji:"🐭", nick:"棉花糖",
+        similarity: 86, sharedTags:["限定","首发","周边入手"],
+        complementarity:"你负责情报先行，她负责下单执行，「首发战队」天作之合，从不错过任何一波。",
+        chemistry:"限定狼 × 囤囤鼠 ＝ 情报前线 遇上 首发执行官" },
+      { mascot:"扩列犬", mascotType:"社交发动机", emoji:"🐕", nick:"旺旺",
+        similarity: 61, sharedTags:["情报","二次元","扩列"],
+        complementarity:"扩列犬的流量帮你把情报扩散给更多需要的人，你的情报帮他保持话题新鲜感，互惠共赢。",
+        chemistry:"限定狼 × 扩列犬 ＝ 情报首席 遇上 传播引擎" },
+      { mascot:"考据猫", mascotType:"冷知识百科", emoji:"🔍", nick:"墨墨",
+        similarity: 69, sharedTags:["深挖","情报","二次元"],
+        complementarity:"你找到限定，他挖出限定背后的设计故事，信息深度瞬间翻倍，联合帖子质量无人能及。",
+        chemistry:"限定狼 × 考据猫 ＝ 情报雷达 遇上 背景挖掘机" },
+    ],
+    icebreakers: [
+      { step:"1", text:"发「限定预警」帖子，附上倒计时，抢占小镇信息高地" },
+      { step:"2", text:"开设「限定情报站」小圈子，邀请感兴趣的人加入" },
+      { step:"3", text:"在别人发帖「求限定情报」时第一时间出现回复，树立「情报首席」人设" },
+    ]
+  },
+  "咕咕鸽": {
+    matches: [
+      { mascot:"扩列犬", mascotType:"社交发动机", emoji:"🐕", nick:"旺旺",
+        similarity: 54, sharedTags:["夜猫子","二次元","随缘"],
+        complementarity:"扩列犬会主动来敲你的门，你只要开门就行，最低社交成本的高质量组合。",
+        chemistry:"咕咕鸽 × 扩列犬 ＝ 神秘嘉宾 遇上 组队发起人" },
+      { mascot:"追番猫", mascotType:"追番不鸽更", emoji:"🐱", nick:"柠檬",
+        similarity: 71, sharedTags:["追番","随缘","夜猫子"],
+        complementarity:"你们都随缘，但一旦聊起番来就停不下来，不需要主动维护也能保持的那种友谊。",
+        chemistry:"咕咕鸽 × 追番猫 ＝ 佛系同频 遇上 话题无限" },
+      { mascot:"囤囤鼠", mascotType:"收藏狂魔", emoji:"🐭", nick:"棉花糖",
+        similarity: 59, sharedTags:["限定","随缘","二次元"],
+        complementarity:"你鸽了的收藏可以委托她帮你盯梢，你偶尔爆发的神出鬼没又给她的开箱圈带来惊喜。",
+        chemistry:"咕咕鸽 × 囤囤鼠 ＝ 随缘爆发力 遇上 收藏执行力" },
+    ],
+    icebreakers: [
+      { step:"1", text:"发一条「今天出来了」类型的随缘动态，不承诺频率，随性破冰" },
+      { step:"2", text:"在别人有趣的帖子下留一个共鸣 emoji，门槛最低的存在感维持法" },
+      { step:"3", text:"偶尔发一次惊喜高质量内容，咕咕鸽的神出鬼没反而会制造话题感" },
+    ]
+  },
+};
+
+let selectedMascot = null;
+let userTags = [];
+
+function pickMascot(el) {
+  document.querySelectorAll('.mascot-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMascot = el.dataset.id;
+}
+
+function focusTagInput() {
+  document.getElementById('tagInputField').focus();
+}
+
+function handleTagKey(e) {
+  if (e.key === ' ' || e.key === 'Enter' || e.key === '，' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/^[,，\s]+|[,，\s]+$/g, '');
+    if (val && !userTags.includes(val)) {
+      userTags.push(val);
+      renderTagChips();
+    }
+    e.target.value = '';
+  }
+}
+
+function renderTagChips() {
+  const wrap = document.getElementById('tagChipsWrap');
+  const input = document.getElementById('tagInputField');
+  wrap.innerHTML = '';
+  userTags.forEach((tag, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${tag}<span class="tag-chip-del" onclick="removeTag(${i})">×</span>`;
+    wrap.appendChild(chip);
+  });
+  wrap.appendChild(input);
+  input.focus();
+}
+
+function removeTag(i) {
+  userTags.splice(i, 1);
+  renderTagChips();
+}
+
+async function callAI(mascotId, tags) {
+  const tagsStr = tags.length > 0 ? tags.join('、') : '无';
+  const prompt = `你是次元萌宠小镇的AI社交顾问。用户选择了萌宠人格「${mascotId}」，自定义标签是：${tagsStr}。
+
+请根据这些标签，生成个性化内容，严格返回如下JSON格式，不要有任何多余文字：
+{
+  "desc": "一句话个性化描述这个用户（结合他的标签，30字以内，口语化，有二次元感）",
+  "tags": ["基于用户标签生成的3-4个个性标签"],
+  "icebreakers": [
+    {"step": "1", "text": "结合用户标签的第一条破冰建议（20字以内）"},
+    {"step": "2", "text": "第二条破冰建议（20字以内）"},
+    {"step": "3", "text": "第三条破冰建议（20字以内）"}
+  ]
+}`;
+
+  const res = await fetch('https://api.openai-next.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer sk-wbvUHCOFl7Rqnj9u7e43E2F86c7d4b058280D82c6dCa7dDc',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      max_tokens: 400,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const json = await res.json();
+  const text = json.choices?.[0]?.message?.content || '';
+  const match = text.match(/\{[\s\S]*\}/);
+  if (match) {
+    return JSON.parse(match[0]);
+  }
+  return null;
+}
+
+async function startGenerate() {
+  const inputVal = document.getElementById('tagInputField').value.trim();
+  if (inputVal) { userTags.push(inputVal); }
+  if (!selectedMascot) {
+    const first = document.querySelector('.mascot-card');
+    if (first) { first.classList.add('selected'); selectedMascot = first.dataset.id; }
+  }
+
+  document.getElementById('s-input').classList.add('hidden');
+  const loadingEl = document.getElementById('s-loading');
+  loadingEl.classList.remove('hidden');
+  loadingEl.style.display = 'flex';
+
+  const base = buildStrategy();
+
+  try {
+    const aiData = await callAI(base.mascotId, userTags);
+    if (aiData) {
+      if (aiData.desc) base.mascotDef = { ...base.mascotDef, desc: aiData.desc };
+      if (aiData.tags?.length) base.tags = aiData.tags;
+      if (aiData.icebreakers?.length) base.strategy = { ...base.strategy, icebreakers: aiData.icebreakers };
+    }
+  } catch (e) {
+    // AI 调用失败时静默降级，使用模板内容
+    console.warn('AI 生成失败，使用模板内容', e);
+  }
+
+  renderResult(base);
+}
+
+function buildStrategy() {
+  const mascotId = selectedMascot || '扩列犬';
+  const def = MASCOT_DEFS[mascotId];
+  const strategy = STRATEGY_DB[mascotId];
+  const tags = userTags.length > 0 ? userTags : def.tags.slice(0, 3);
+  const nicks = { 扩列犬:["旺旺","噗噗","欧力给"], 追番猫:["咕噜","阿宅","柠檬"], 囤囤鼠:["棉花糖","泡泡","叮当"], 太太狐:["小狐狸","墨墨","晚风"], 考据猫:["数据库","冷冷","深挖"], 限定狼:["猎影","尖牙","情报姬"], 咕咕鸽:["阿咕","随缘","神秘嘉宾"] };
+  const nickList = nicks[mascotId] || ["小可爱"];
+  const nick = nickList[Math.floor(Math.random() * nickList.length)];
+  return { mascotId, mascotDef: def, nick, tags, strategy };
+}
+
+function renderResult(data) {
+  document.getElementById('s-loading').classList.add('hidden');
+
+  const { mascotId, mascotDef, nick, tags, strategy } = data;
+  document.getElementById('resultMascotImg').src = mascotDef.image;
+  document.getElementById('rName').textContent = `${mascotId} · ${nick}`;
+  document.getElementById('rType').textContent = `${mascotDef.type} · 次元小镇居民`;
+  document.getElementById('rDesc').textContent = mascotDef.desc;
+  document.getElementById('rTags').innerHTML =
+    tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  // 推荐认识的人
+  const matchesEl = document.getElementById('strategyMatches');
+  matchesEl.innerHTML = strategy.matches.map(m => {
+    const activeTags = userTags.length > 0
+      ? m.sharedTags.filter(t => userTags.some(ut => ut.includes(t) || t.includes(ut))).concat(m.sharedTags).slice(0,3)
+      : m.sharedTags;
+    const uniqueTags = [...new Set(activeTags)].slice(0,3);
+    return `
+    <div class="match-row">
+      <div class="match-header">
+        <div class="match-avatar">${m.emoji}</div>
+        <div class="match-header-info">
+          <div class="match-name">${m.mascot} · ${m.nick}</div>
+          <div class="match-mascot-type">${m.mascotType}</div>
+        </div>
+        <div class="match-compat-badge">适配 ${m.similarity}%</div>
+      </div>
+
+      <div class="dim-row">
+        <div class="dim-label">
+          <span class="dim-dot" style="background:linear-gradient(135deg,#ff2d78,#a855f7);"></span>相似度
+        </div>
+        <div class="sim-bar-row">
+          <div class="sim-bar-bg"><div class="sim-bar-fill" style="width:${m.similarity}%;"></div></div>
+          <span class="sim-pct">${m.similarity}%</span>
+        </div>
+        <div class="sim-tags">${uniqueTags.map(t => `<span class="sim-tag">${t}</span>`).join('')}</div>
+      </div>
+
+      <div class="dim-row">
+        <div class="dim-label">
+          <span class="dim-dot" style="background:#a855f7;"></span>互补性
+        </div>
+        <div class="comp-text">${m.complementarity}</div>
+      </div>
+
+      <div class="dim-row">
+        <div class="dim-label">
+          <span class="dim-dot" style="background:linear-gradient(135deg,#ff2d78,#f97316);"></span>萌宠特性
+        </div>
+        <div class="chem-pill">
+          <span style="font-size:16px;">⚡</span>
+          <span class="chem-pill-text">${m.chemistry}</span>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+
+  // 破冰步骤
+  const icebreakerEl = document.getElementById('icebreakerList');
+  icebreakerEl.innerHTML = strategy.icebreakers.map(step => `
+    <div class="icebreaker-item">
+      <div class="icebreaker-step">${step.step}</div>
+      <span>${step.text}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('s-result').classList.remove('hidden');
+}
+
+function resetToInput() {
+  document.getElementById('s-result').classList.add('hidden');
+  document.getElementById('s-input').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

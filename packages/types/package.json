@@ -1,0 +1,16 @@
+{
+  "name": "@erciyuan/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript types for anime-agent-town (ServerMsg / Character / ThoughtTrace / Mascot / etc.)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  }
+}

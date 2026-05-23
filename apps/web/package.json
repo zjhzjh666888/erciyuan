@@ -1,0 +1,37 @@
+{
+  "name": "@erciyuan/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "次元萌宠小镇 / anime-agent-town — Next.js 14 App Router 前端（Slice 0 骨架）",
+  "scripts": {
+    "sync:assets": "node scripts/sync-assets.mjs",
+    "predev": "node scripts/sync-assets.mjs",
+    "dev": "next dev -p 3000",
+    "prebuild": "node scripts/sync-assets.mjs",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@erciyuan/mock-town": "0.1.0",
+    "@erciyuan/types": "0.1.0",
+    "framer-motion": "^11.5.4",
+    "next": "14.2.18",
+    "phaser": "3.86.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.18",
+    "postcss": "8.4.47",
+    "prettier": "3.3.3",
+    "tailwindcss": "3.4.13",
+    "typescript": "5.4.5"
+  }
+}
