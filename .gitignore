@@ -5,6 +5,7 @@ node_modules/
 dist/
 .next/
 *.tsbuildinfo
+!packages/mock-town/dist/
 
 # Logs
 *.log
