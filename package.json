@@ -1,0 +1,42 @@
+{
+  "name": "anime-agent-town",
+  "version": "0.1.0",
+  "private": true,
+  "description": "次元萌宠小镇 / anime-agent-town — 抖音黑客松赛道 1「AI 体验：刷到懂你的瞬间」参赛作品",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "scripts": {
+    "check:assets": "tsx scripts/check-assets.ts",
+    "check:assets:strict": "tsx scripts/check-assets-strict.ts",
+    "predev": "npm run check:assets",
+    "dev": "npm run dev --workspace=@erciyuan/web",
+    "build": "npm run build --workspace=@erciyuan/web",
+    "start": "npm run start --workspace=@erciyuan/web",
+    "prebuild": "npm run check:assets",
+    "predemo": "npm run check:assets:strict",
+    "demo": "echo 'demo script will be implemented after Slice 0' && exit 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:assets": "vitest run tests/asset-manifest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.0",
+    "@types/qrcode": "^1.5.6",
+    "fast-check": "^3.16.0",
+    "js-yaml": "^4.1.0",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.5",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}
