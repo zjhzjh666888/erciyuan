@@ -15,7 +15,7 @@
     "check:assets:strict": "tsx scripts/check-assets-strict.ts",
     "predev": "npm run check:assets",
     "dev": "npm run dev --workspace=@erciyuan/web",
-    "build": "npm run build --workspace=@erciyuan/web",
+    "build": "npm run build --workspace=@erciyuan/mock-town && npm run build --workspace=@erciyuan/web",
     "start": "npm run start --workspace=@erciyuan/web",
     "prebuild": "npm run check:assets",
     "predemo": "npm run check:assets:strict",
